@@ -46,7 +46,7 @@ export default function NavigationBar() {
             backgroundColor: 'rgba(245, 230, 200, 0.1)',
             border: '1px solid rgba(245, 230, 200, 0.2)',
             padding: '0.15rem 0.5rem',
-            borderRadius: '4px',
+            borderRadius: '0px',
             textTransform: 'uppercase'
           }}>
             HUMAN TELEPHONY

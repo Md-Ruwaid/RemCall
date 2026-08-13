@@ -16,9 +16,9 @@ export default function FooterBar() {
   return (
     <footer style={{
       borderTop: '1px solid var(--border-subtle)',
-      backgroundColor: 'var(--bg-dark)',
-      paddingTop: '1.25rem',
-      paddingBottom: '1.25rem',
+      backgroundColor: 'var(--bg-dark-secondary)',
+      paddingTop: '1.5rem',
+      paddingBottom: '1.5rem',
       marginTop: 'auto',
       position: 'relative',
       zIndex: 10
@@ -28,26 +28,44 @@ export default function FooterBar() {
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '1rem',
+        gap: '1.25rem',
         fontSize: '0.78rem',
         fontFamily: 'var(--font-display)',
         color: 'var(--text-muted)'
       }}>
-        {/* Left: Brand Name Bold + Pitch tagline */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <strong style={{ color: 'var(--text-white)', letterSpacing: '0.05em' }}>RINGLY</strong>
-          <span style={{ color: 'var(--text-subtle)' }}>·</span>
-          <span>REAL HUMANS. REAL CALLS. ZERO SPAM.</span>
+        {/* Left: Brand Name Bold + Operational Pitch */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <strong style={{ color: 'var(--text-white)', letterSpacing: '0.06em', fontSize: '0.9rem' }}>RINGLY</strong>
+          <span style={{ color: 'var(--border-subtle)' }}>|</span>
+          <span style={{ color: 'var(--text-muted)' }}>REAL HUMANS. REAL CALLS. ZERO SPAM.</span>
         </div>
 
-        {/* Center: Contact Email */}
-        <div>
-          CONTACT: <a href="mailto:hello@ringly.call" style={{ color: 'var(--accent-cream)', textDecoration: 'underline' }}>hello@ringly.call</a>
+        {/* Center: System Status Badge & Contact Email */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            background: 'rgba(46, 204, 113, 0.1)',
+            border: '1px solid rgba(46, 204, 113, 0.25)',
+            padding: '0.25rem 0.65rem',
+            color: 'var(--accent-green)',
+            fontSize: '0.7rem',
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 700
+          }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-green)' }} />
+            SYSTEM ACTIVE
+          </div>
+
+          <div>
+            CONTACT: <a href="mailto:hello@ringly.call" style={{ color: 'var(--accent-cream)', textDecoration: 'underline' }}>hello@ringly.call</a>
+          </div>
         </div>
 
-        {/* Right: Slide Deck Counter & Quick Toggle */}
+        {/* Right: Slide Deck Counter & Quick Navigation */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <span style={{ color: 'var(--accent-cream)', letterSpacing: '0.06em', fontWeight: 600 }}>
+          <span style={{ color: 'var(--accent-cream)', letterSpacing: '0.06em', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
             SLIDE {getSlideNumber()}
           </span>
           <button

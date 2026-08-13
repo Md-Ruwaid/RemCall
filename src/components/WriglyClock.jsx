@@ -68,7 +68,7 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
       ctx.scale(DPR, DPR);
       ctx.clearRect(0, 0, size, size);
 
-      const R = (size / 2) * 0.76; // Reserve 24% outer space for meeting label and clear clock margins
+      const R = (size / 2) * 0.68; // Reserve outer space for meeting callout and clear clock margins
       const cx = size / 2;
       const cy = size / 2;
 
@@ -186,32 +186,38 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
 
       if (meetingOpacity > 0) {
         const meetingRad = ((120 - 90) * Math.PI) / 180; // 120° = 4 o'clock
-        const tickStartR = R * 1.03;
-        const tickEndR = R * 1.16;
+        const pinStartR = R * 0.99;
+        const pinEndR = R * 1.14;
 
-        // Static Red Tick Outside Clock Rim
+        // Leader Pin Line connecting outward from 4 o'clock rim
         ctx.strokeStyle = `rgba(231, 76, 60, ${meetingOpacity})`;
-        ctx.lineWidth = R * 0.028;
+        ctx.lineWidth = R * 0.024;
         ctx.beginPath();
-        ctx.moveTo(cx + tickStartR * Math.cos(meetingRad), cy + tickStartR * Math.sin(meetingRad));
-        ctx.lineTo(cx + tickEndR * Math.cos(meetingRad), cy + tickEndR * Math.sin(meetingRad));
+        ctx.moveTo(cx + pinStartR * Math.cos(meetingRad), cy + pinStartR * Math.sin(meetingRad));
+        ctx.lineTo(cx + pinEndR * Math.cos(meetingRad), cy + pinEndR * Math.sin(meetingRad));
         ctx.stroke();
 
-        // Two-line Text Outside Dial: "4:00" on top, "Meeting" below
+        // Pin Dot at clock rim
+        ctx.fillStyle = `rgba(231, 76, 60, ${meetingOpacity})`;
+        ctx.beginPath();
+        ctx.arc(cx + pinStartR * Math.cos(meetingRad), cy + pinStartR * Math.sin(meetingRad), R * 0.035, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Two-line Callout Text Outside Dial: "4:00" on top, "Meeting" below
         ctx.fillStyle = `rgba(231, 76, 60, ${meetingOpacity})`;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
 
-        const labelX = cx + (R * 1.22) * Math.cos(meetingRad);
-        const labelY = cy + (R * 1.22) * Math.sin(meetingRad);
+        const labelX = cx + (R * 1.18) * Math.cos(meetingRad);
+        const labelY = cy + (R * 1.18) * Math.sin(meetingRad);
 
         // Line 1: "4:00"
         ctx.font = `700 ${Math.round(R * 0.095)}px 'Space Mono', monospace`;
         ctx.fillText('4:00', labelX + 2, labelY - 7);
 
         // Line 2: "Meeting"
-        ctx.font = `600 ${Math.round(R * 0.08)}px 'Space Grotesk', sans-serif`;
-        ctx.fillText('Meeting', labelX + 2, labelY + 10);
+        ctx.font = `600 ${Math.round(R * 0.085)}px 'Space Grotesk', sans-serif`;
+        ctx.fillText('Meeting', labelX + 2, labelY + 9);
       }
 
       // 7. Minute Hand (Sleeker & Longer: 0.76R)

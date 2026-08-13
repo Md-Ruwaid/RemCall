@@ -29,7 +29,7 @@ export default function CallSimulatorWidget() {
     <div style={{
       background: 'var(--bg-card)',
       border: '1px solid var(--border-subtle)',
-      borderRadius: '16px',
+      borderRadius: '0px',
       padding: '2rem',
       display: 'flex',
       flexDirection: 'column',
@@ -86,7 +86,7 @@ export default function CallSimulatorWidget() {
 
       {callState === 'connected' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ background: 'var(--bg-dark)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-cream)' }}>
+          <div style={{ background: 'var(--bg-dark)', padding: '1rem', borderRadius: '0px', borderLeft: '3px solid var(--accent-cream)' }}>
             <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--accent-cream)', fontWeight: 700 }}>
               HUMAN OPERATOR (MARCUS):
             </div>
@@ -103,7 +103,7 @@ export default function CallSimulatorWidget() {
                 color: '#081C10',
                 border: 'none',
                 padding: '0.75rem',
-                borderRadius: '6px',
+                borderRadius: '0px',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.78rem',
                 fontWeight: 700,
@@ -119,7 +119,7 @@ export default function CallSimulatorWidget() {
                 color: '#E74C3C',
                 border: '1px solid #E74C3C',
                 padding: '0.75rem',
-                borderRadius: '6px',
+                borderRadius: '0px',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.78rem',
                 fontWeight: 700,
@@ -133,7 +133,7 @@ export default function CallSimulatorWidget() {
       )}
 
       {callState === 'completed' && (
-        <div style={{ background: 'rgba(46, 204, 113, 0.1)', border: '1px solid #2ECC71', padding: '1.25rem', borderRadius: '8px', textAlign: 'center' }}>
+        <div style={{ background: 'rgba(46, 204, 113, 0.1)', border: '1px solid #2ECC71', padding: '1.25rem', borderRadius: '0px', textAlign: 'center' }}>
           <div className="font-mono" style={{ color: '#2ECC71', fontWeight: 700, fontSize: '0.85rem' }}>
             ✓ CALL VERIFIED & CONFIRMED AT 08:31 AM
           </div>
@@ -150,7 +150,7 @@ export default function CallSimulatorWidget() {
       )}
 
       {callState === 'missed' && (
-        <div style={{ background: 'rgba(231, 76, 60, 0.1)', border: '1px solid #E74C3C', padding: '1.25rem', borderRadius: '8px', textAlign: 'center' }}>
+        <div style={{ background: 'rgba(231, 76, 60, 0.1)', border: '1px solid #E74C3C', padding: '1.25rem', borderRadius: '0px', textAlign: 'center' }}>
           <div className="font-mono" style={{ color: '#E74C3C', fontWeight: 700, fontSize: '0.85rem' }}>
             ↻ RE-DIAL QUEUED FOR 08:36 AM
           </div>

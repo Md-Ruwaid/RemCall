@@ -30,12 +30,33 @@ export default function SubscriberDashboard() {
       return;
     }
 
-    // Validate callTime is before subscriptionEnd (Sunday cutoff rule)
+    // Validate callTime is in the future
     const scheduledDateTime = new Date(`${date}T${time}:00`);
-    const subEndDateTime = new Date(user.subscriptionEnd);
+    if (isNaN(scheduledDateTime.getTime()) || scheduledDateTime < new Date()) {
+      setErrorMsg('Cannot schedule a call reminder in the past. Please select a future time.');
+      return;
+    }
 
+    // Validate callTime is before subscriptionEnd (Sunday cutoff rule)
+    const subEndDateTime = new Date(user.subscriptionEnd);
     if (scheduledDateTime >= subEndDateTime) {
       setErrorMsg(`PRD Rule Violation: Call time must be strictly before Sunday cutoff (${subEndDateTime.toLocaleString()}).`);
+      return;
+    }
+
+    // Enforce Daily Call Limit rule
+    const callsOnSelectedDate = reminders.filter((r) => {
+      if (r.userId !== 'usr-1' || r.status === 'Cancelled' || r.status === 'Missed') return false;
+      const rDate = new Date(r.callTime);
+      return (
+        rDate.getFullYear() === scheduledDateTime.getFullYear() &&
+        rDate.getMonth() === scheduledDateTime.getMonth() &&
+        rDate.getDate() === scheduledDateTime.getDate()
+      );
+    });
+
+    if (callsOnSelectedDate.length >= user.dailyCallLimit) {
+      setErrorMsg(`Daily Limit Reached: Your subscription allows a maximum of ${user.dailyCallLimit} call(s) per day.`);
       return;
     }
 
@@ -77,7 +98,7 @@ export default function SubscriberDashboard() {
                 background: user.subscriptionActive ? 'rgba(46, 204, 113, 0.15)' : 'rgba(231, 76, 60, 0.15)',
                 border: `1px solid ${user.subscriptionActive ? '#2ECC71' : '#E74C3C'}`,
                 padding: '0.6rem 1.2rem',
-                borderRadius: '8px',
+                borderRadius: '0px',
                 fontSize: '0.82rem',
                 fontFamily: 'var(--font-display)',
                 fontWeight: 700,
@@ -109,13 +130,13 @@ export default function SubscriberDashboard() {
             </p>
 
             {errorMsg && (
-              <div style={{ background: 'rgba(231,76,60,0.15)', border: '1px solid #E74C3C', color: '#E74C3C', padding: '0.8rem', borderRadius: '8px', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+              <div style={{ background: 'rgba(231,76,60,0.15)', border: '1px solid #E74C3C', color: '#E74C3C', padding: '0.8rem', borderRadius: '0px', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
                 {errorMsg}
               </div>
             )}
 
             {successMsg && (
-              <div style={{ background: 'rgba(46,204,113,0.15)', border: '1px solid #2ECC71', color: '#2ECC71', padding: '0.8rem', borderRadius: '8px', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+              <div style={{ background: 'rgba(46,204,113,0.15)', border: '1px solid #2ECC71', color: '#2ECC71', padding: '0.8rem', borderRadius: '0px', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
                 {successMsg}
               </div>
             )}
@@ -244,7 +265,7 @@ export default function SubscriberDashboard() {
                                   fontSize: '0.7rem',
                                   fontFamily: 'var(--font-mono)',
                                   padding: '0.25rem 0.55rem',
-                                  borderRadius: '4px',
+                                  borderRadius: '0px',
                                   cursor: 'pointer'
                                 }}
                                 title="Cancel this scheduled call"
@@ -294,7 +315,7 @@ export default function SubscriberDashboard() {
                       </div>
 
                       {rem.notes && (
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-subtle)', background: 'var(--bg-dark)', padding: '0.6rem 0.9rem', borderRadius: '6px' }}>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-subtle)', background: 'var(--bg-dark)', padding: '0.6rem 0.9rem', borderRadius: '0px' }}>
                           Note for caller: "{rem.notes}"
                         </div>
                       )}
@@ -313,13 +334,21 @@ export default function SubscriberDashboard() {
 }
 
 function getTodayYYYYMMDD() {
-  return new Date().toISOString().split('T')[0];
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function getUpcomingSundayYYYYMMDD() {
   const d = new Date();
   const day = d.getDay();
-  const diff = d.getDate() + (7 - day);
-  const sunday = new Date(d.setDate(diff));
-  return sunday.toISOString().split('T')[0];
+  const daysUntilSunday = (7 - day) % 7;
+  const sunday = new Date(d);
+  sunday.setDate(d.getDate() + daysUntilSunday);
+  const year = sunday.getFullYear();
+  const month = String(sunday.getMonth() + 1).padStart(2, '0');
+  const dateStr = String(sunday.getDate()).padStart(2, '0');
+  return `${year}-${month}-${dateStr}`;
 }

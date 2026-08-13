@@ -88,11 +88,11 @@ export default function AdminConsole() {
         {/* Operational Stats & Search Filter */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-            <div style={{ background: 'var(--bg-card)', padding: '0.8rem 1.4rem', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ background: 'var(--bg-card)', padding: '0.8rem 1.4rem', borderRadius: '0px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>ACTIVE QUEUE</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-cream)' }}>{activeQueue.length} CALLS</div>
             </div>
-            <div style={{ background: 'var(--bg-card)', padding: '0.8rem 1.4rem', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ background: 'var(--bg-card)', padding: '0.8rem 1.4rem', borderRadius: '0px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>COMPLETED TODAY</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#2ECC71' }}>{completedCount} CALLED</div>
             </div>
@@ -141,7 +141,7 @@ export default function AdminConsole() {
                             fontSize: '0.7rem',
                             fontWeight: 800,
                             padding: '0.15rem 0.6rem',
-                            borderRadius: '4px',
+                            borderRadius: '0px',
                             fontFamily: 'var(--font-display)'
                           }}>
                             NEXT IN LINE
@@ -174,7 +174,7 @@ export default function AdminConsole() {
                           marginTop: '0.8rem',
                           background: 'var(--bg-dark)',
                           padding: '0.75rem 1rem',
-                          borderRadius: '8px',
+                          borderRadius: '0px',
                           border: '1px solid var(--border-subtle)',
                           fontSize: '0.88rem',
                           color: 'var(--accent-cream)'
@@ -192,7 +192,7 @@ export default function AdminConsole() {
                           backgroundColor: '#2ECC71',
                           color: '#0A2514',
                           border: 'none',
-                          borderRadius: '8px',
+                          borderRadius: '0px',
                           padding: '0.9rem 1.25rem',
                           fontFamily: 'var(--font-display)',
                           fontWeight: 800,
@@ -212,7 +212,7 @@ export default function AdminConsole() {
                           backgroundColor: 'rgba(231, 76, 60, 0.15)',
                           color: '#E74C3C',
                           border: '1px solid #E74C3C',
-                          borderRadius: '8px',
+                          borderRadius: '0px',
                           padding: '0.75rem 1.25rem',
                           fontFamily: 'var(--font-display)',
                           fontWeight: 700,
@@ -230,7 +230,7 @@ export default function AdminConsole() {
                           backgroundColor: 'rgba(155, 89, 182, 0.15)',
                           color: '#9B59B6',
                           border: '1px solid #9B59B6',
-                          borderRadius: '8px',
+                          borderRadius: '0px',
                           padding: '0.75rem 1.25rem',
                           fontFamily: 'var(--font-display)',
                           fontWeight: 700,

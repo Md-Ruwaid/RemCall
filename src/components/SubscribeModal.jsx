@@ -24,7 +24,7 @@ export default function SubscribeModal() {
       setIsProcessing(false);
       setPaymentSuccess(true);
       setTimeout(() => {
-        activateSubscription(callsPerDay, phone);
+        activateSubscription(callsPerDay, phone, name);
         setPaymentSuccess(false);
       }, 1400);
     }, 1200);
@@ -96,7 +96,7 @@ export default function SubscribeModal() {
                         background: callsPerDay === num ? 'var(--accent-cream)' : 'var(--bg-dark)',
                         color: callsPerDay === num ? 'var(--bg-dark)' : 'var(--text-white)',
                         border: `1px solid ${callsPerDay === num ? 'var(--accent-cream)' : 'var(--border-subtle)'}`,
-                        borderRadius: '8px',
+                        borderRadius: '0px',
                         padding: '0.75rem 0',
                         fontFamily: 'var(--font-display)',
                         fontWeight: 800,
@@ -114,7 +114,7 @@ export default function SubscribeModal() {
               <div style={{
                 background: 'var(--bg-dark)',
                 padding: '1.25rem',
-                borderRadius: '10px',
+                borderRadius: '0px',
                 border: '1px solid var(--border-subtle)',
                 display: 'flex',
                 alignItems: 'center',

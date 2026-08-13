@@ -110,7 +110,7 @@ export default function RinglyClockWidget() {
     <div style={{
       background: 'var(--bg-card)',
       border: '1px solid var(--border-subtle)',
-      borderRadius: '20px',
+      borderRadius: '0px',
       padding: '2.2rem 2rem',
       display: 'flex',
       flexDirection: 'column',
@@ -260,7 +260,7 @@ export default function RinglyClockWidget() {
         width: '100%',
         padding: '0.6rem 1rem',
         background: 'var(--bg-dark)',
-        borderRadius: '10px',
+        borderRadius: '0px',
         border: '1px solid var(--border-subtle)',
         fontSize: '0.8rem',
         fontFamily: 'var(--font-mono)'

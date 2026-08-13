@@ -92,12 +92,13 @@ export function AppProvider({ children }) {
   };
 
   // Activate Subscription
-  const activateSubscription = (dailyLimit, phone) => {
+  const activateSubscription = (dailyLimit, phone, name) => {
     setUser((prev) => ({
       ...prev,
       subscriptionActive: true,
       dailyCallLimit: dailyLimit,
       phone: phone || prev.phone,
+      name: name || prev.name,
       subscriptionEnd: getUpcomingSundayISO()
     }));
     setIsSubscribeModalOpen(false);
@@ -113,7 +114,7 @@ export function AppProvider({ children }) {
 
   // Delete Reminder (Only when status is Scheduled)
   const deleteReminder = (id) => {
-    setReminders((prev) => prev.filter((r) => r.id !== id || r.status !== 'Scheduled'));
+    setReminders((prev) => prev.filter((r) => !(r.id === id && r.status === 'Scheduled')));
   };
 
   return (
@@ -147,8 +148,9 @@ export function useApp() {
 function getUpcomingSundayISO() {
   const d = new Date();
   const day = d.getDay();
-  const diff = d.getDate() + (7 - day);
-  const sunday = new Date(d.setDate(diff));
+  const daysUntilSunday = (7 - day) % 7;
+  const sunday = new Date(d);
+  sunday.setDate(d.getDate() + daysUntilSunday);
   sunday.setHours(23, 59, 59, 999);
   return sunday.toISOString();
 }

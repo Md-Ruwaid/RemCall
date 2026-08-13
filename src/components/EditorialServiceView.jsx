@@ -299,7 +299,7 @@ export default function EditorialServiceView() {
               {/* Custom Checkbox Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
                 
-                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '0px', border: '1px solid var(--border-subtle)' }}>
                   <CustomCheckbox
                     label="MORNING CALL (08:00 AM)"
                     subtext="Ideal for daily medication & morning priority"
@@ -308,7 +308,7 @@ export default function EditorialServiceView() {
                   />
                 </div>
 
-                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '0px', border: '1px solid var(--border-subtle)' }}>
                   <CustomCheckbox
                     label="AFTERNOON CALL (01:30 PM)"
                     subtext="Post-lunch task review & meeting reminder"
@@ -317,7 +317,7 @@ export default function EditorialServiceView() {
                   />
                 </div>
 
-                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '0px', border: '1px solid var(--border-subtle)' }}>
                   <CustomCheckbox
                     label="EVENING CALL (08:00 PM)"
                     subtext="Nightly reflection, journal & habit check-in"
@@ -326,7 +326,7 @@ export default function EditorialServiceView() {
                   />
                 </div>
 
-                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ background: 'var(--bg-dark)', padding: '1.5rem', borderRadius: '0px', border: '1px solid var(--border-subtle)' }}>
                   <CustomCheckbox
                     label="URGENT RE-DIAL GUARD"
                     subtext="Re-call after 5 mins if first call goes unanswered"
@@ -341,7 +341,7 @@ export default function EditorialServiceView() {
               <div style={{
                 background: 'rgba(245, 230, 200, 0.05)',
                 border: '1px solid rgba(245, 230, 200, 0.2)',
-                borderRadius: '12px',
+                borderRadius: '0px',
                 padding: '1.5rem',
                 display: 'flex',
                 alignItems: 'center',
@@ -409,7 +409,7 @@ export default function EditorialServiceView() {
             </h2>
 
             <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '3.5rem', fontSize: '1.1rem' }}>
-              Calculated using the official formula: <code style={{ color: 'var(--accent-cream)', background: 'rgba(245,230,200,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>₹149 + ₹60 × (calls − 1)</code>
+              Calculated using the official formula: <code style={{ color: 'var(--accent-cream)', background: 'rgba(245,230,200,0.1)', padding: '0.2rem 0.5rem', borderRadius: '0px' }}>₹149 + ₹60 × (calls − 1)</code>
             </p>
 
             {/* Daily Call Selector Buttons */}
@@ -424,7 +424,7 @@ export default function EditorialServiceView() {
                       background: isActive ? 'var(--accent-cream)' : 'var(--bg-dark-secondary)',
                       color: isActive ? 'var(--bg-dark)' : 'var(--text-white)',
                       border: `1px solid ${isActive ? 'var(--accent-cream)' : 'var(--border-subtle)'}`,
-                      borderRadius: '12px',
+                      borderRadius: '0px',
                       padding: '1.25rem 0.5rem',
                       fontFamily: 'var(--font-display)',
                       fontWeight: 800,
