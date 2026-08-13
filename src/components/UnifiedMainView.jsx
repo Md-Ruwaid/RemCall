@@ -11,25 +11,28 @@ export default function UnifiedMainView() {
     <div
       className="view-fade-enter"
       style={{
-        height: 'calc(100vh - 60px)',
+        height: '100vh',
         maxHeight: '100vh',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         overflow: 'hidden',
-        padding: '1rem 0'
+        paddingTop: '4.5rem',
+        paddingBottom: '1.25rem'
       }}
     >
-      <div className="container-wide" style={{ width: '100%' }}>
+      {/* Hero Content Section */}
+      <div className="container-wide" style={{ width: '100%', flex: 1, display: 'flex', alignItems: 'center' }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '2.5rem',
-          alignItems: 'center'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: '3rem',
+          alignItems: 'center',
+          width: '100%'
         }}>
 
           {/* Left Column: Direct Headline & Copy */}
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="font-mono" style={{
               fontSize: '0.78rem',
               fontWeight: 700,
@@ -41,7 +44,7 @@ export default function UnifiedMainView() {
             </div>
 
             {/* Dynamic Interactive TextPressure Main Headline */}
-            <div style={{ position: 'relative', height: '95px', marginBottom: '1.25rem' }}>
+            <div style={{ position: 'relative', height: '100px', marginBottom: '1.5rem' }}>
               <TextPressure
                 text="WE CALL. YOU REMEMBER."
                 flex={true}
@@ -56,45 +59,51 @@ export default function UnifiedMainView() {
             </div>
 
             <p style={{
-              fontSize: 'clamp(1.15rem, 1.8vw, 1.35rem)',
+              fontSize: 'clamp(1.18rem, 1.9vw, 1.4rem)',
               fontWeight: 600,
               color: 'var(--accent-cream)',
-              lineHeight: 1.35,
-              marginBottom: '1.75rem',
-              maxWidth: '520px'
+              lineHeight: 1.4,
+              marginBottom: '2.25rem',
+              maxWidth: '540px'
             }}>
               Never Miss an Event<br />
               Never Procrastinate
             </p>
 
             {/* Single Spotlight "FIX IT" Button */}
-            <div style={{ marginBottom: '2rem' }}>
+            <div>
               <SpotlightButton
                 text="FIX IT"
                 onClick={() => setIsSubscribeModalOpen(true)}
               />
             </div>
-
-            <div className="font-mono" style={{
-              fontSize: '0.75rem',
-              color: 'var(--text-muted)',
-              display: 'flex',
-              gap: '1.25rem',
-              flexWrap: 'wrap',
-              borderTop: '1px solid var(--border-subtle)',
-              paddingTop: '1rem'
-            }}>
-              <span>RATE: ₹149/WK BASE</span>
-              <span>LIMIT: 1–6 CALLS/DAY</span>
-              <span>NO APP REQUIRED</span>
-            </div>
           </div>
 
           {/* Right Column: The Wrigly Clock Hero Animation */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <WriglyClock size={340} />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <WriglyClock size={400} />
           </div>
 
+        </div>
+      </div>
+
+      {/* Operational Rate & Limit Info Bar at the Complete End of the Website */}
+      <div className="container-wide" style={{ width: '100%' }}>
+        <div className="font-mono" style={{
+          fontSize: '0.78rem',
+          color: 'var(--text-muted)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '1.5rem',
+          flexWrap: 'wrap',
+          borderTop: '1px solid var(--border-subtle)',
+          paddingTop: '1rem',
+          paddingBottom: '0.25rem'
+        }}>
+          <span>RATE: ₹149/WK BASE</span>
+          <span>LIMIT: 1–6 CALLS/DAY</span>
+          <span>NO APP REQUIRED</span>
         </div>
       </div>
     </div>

@@ -48,15 +48,14 @@ const SpotlightButton = ({ text = 'FIX IT', onClick, style = {} }) => {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100%',
-        maxWidth: '280px',
-        height: '54px',
+        width: '260px',
+        height: '52px',
         overflow: 'hidden',
         borderRadius: '9999px',
         backgroundColor: '#0F212A',
         border: '1.5px solid #F5E6C8',
-        padding: '0 2.5rem',
-        fontSize: '1.1rem',
+        padding: '0 1.5rem',
+        fontSize: '1.05rem',
         fontFamily: 'var(--font-display)',
         fontWeight: 800,
         letterSpacing: '0.08em',
@@ -74,7 +73,9 @@ const SpotlightButton = ({ text = 'FIX IT', onClick, style = {} }) => {
         zIndex: 10,
         mixBlendMode: 'difference',
         pointerEvents: 'none',
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        textAlign: 'center',
+        width: '100%'
       }}>
         {text}
       </span>

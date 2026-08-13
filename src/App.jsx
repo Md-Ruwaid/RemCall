@@ -84,7 +84,6 @@ function AppShell() {
           {activeView === 'admin' && <AdminConsole />}
         </main>
         <SubscribeModal />
-        <FooterBar />
       </div>
 
     </div>

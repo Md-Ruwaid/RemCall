@@ -109,7 +109,7 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
 
       // 4. Draw Real Hour Numbers (12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
       ctx.fillStyle = PALETTE.numbers;
-      ctx.font = `700 ${Math.round(R * 0.12)}px 'Space Grotesk', sans-serif`;
+      ctx.font = `700 ${Math.round(R * 0.12)}px 'Space Grotesk', -apple-system, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const numberR = R * 0.74;
@@ -273,6 +273,10 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
         justifyContent: 'center',
         background: 'transparent',
         padding: '0',
+        width: `${size}px`,
+        height: `${size}px`,
+        aspectRatio: '1 / 1',
+        flexShrink: 0,
         ...style
       }}
     >
