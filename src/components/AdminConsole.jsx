@@ -200,7 +200,7 @@ export default function AdminConsole() {
                           letterSpacing: '0.05em',
                           cursor: 'pointer',
                           textTransform: 'uppercase',
-                          boxShadow: '0 4px 12px rgba(46, 204, 113, 0.2)'
+                          boxShadow: 'none'
                         }}
                       >
                         ✓ MARK CALLED

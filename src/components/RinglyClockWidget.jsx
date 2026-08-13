@@ -116,7 +116,7 @@ export default function RinglyClockWidget() {
       flexDirection: 'column',
       alignItems: 'center',
       gap: '1.25rem',
-      boxShadow: '0 25px 50px rgba(0,0,0,0.35)',
+      boxShadow: 'none',
       width: '100%',
       maxWidth: '420px',
       margin: '0 auto'
@@ -151,7 +151,7 @@ export default function RinglyClockWidget() {
         height: SIZE,
         borderRadius: '50%',
         background: '#0E1E26',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.08)'
+        boxShadow: 'none'
       }}>
         
         {/* Dynamic Color Trail Arc */}
@@ -193,7 +193,7 @@ export default function RinglyClockWidget() {
           background: '#C05C4E',
           transform: `translate(-50%, -50%) translate(${seal.dx}px, ${seal.dy}px)`,
           zIndex: 4,
-          boxShadow: '0 0 8px rgba(192, 92, 78, 0.6)'
+          boxShadow: 'none'
         }}>
           {/* Flinch Expanding Ring */}
           <div style={{
@@ -235,7 +235,7 @@ export default function RinglyClockWidget() {
           transformOrigin: 'bottom center',
           transform: `rotateZ(${handDeg}deg)`,
           zIndex: 3,
-          boxShadow: '0 2px 4px rgba(0,0,0,0.4)'
+          boxShadow: 'none'
         }} />
 
         {/* Center Cap */}

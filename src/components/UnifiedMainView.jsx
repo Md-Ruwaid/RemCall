@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import WriglyClock from './WriglyClock';
-import TextPressure from './TextPressure';
+import GradientRevealText from './GradientRevealText';
 import SpotlightButton from './SpotlightButton';
 
 export default function UnifiedMainView() {
@@ -43,19 +43,9 @@ export default function UnifiedMainView() {
               [ SERVICE TYPE: HUMAN OPERATOR TELEPHONY ]
             </div>
 
-            {/* Dynamic Interactive TextPressure Main Headline */}
-            <div style={{ position: 'relative', height: '100px', marginBottom: '1.5rem' }}>
-              <TextPressure
-                text="WE CALL. YOU REMEMBER."
-                flex={true}
-                alpha={false}
-                stroke={false}
-                width={true}
-                weight={true}
-                italic={true}
-                textColor="#FFFFFF"
-                minFontSize={28}
-              />
+            {/* GSAP Gradient Reveal Main Headline */}
+            <div style={{ marginBottom: '1.75rem' }}>
+              <GradientRevealText lines={["WE CALL.", "YOU REMEMBER."]} />
             </div>
 
             <p style={{

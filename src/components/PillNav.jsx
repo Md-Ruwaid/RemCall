@@ -247,8 +247,6 @@ const PillNav = ({
                   href={item.href || '#'}
                   className={`pill${activeHref === item.href ? ' is-active' : ''}`}
                   aria-label={item.ariaLabel || item.label}
-                  onMouseEnter={() => handleEnter(i)}
-                  onMouseLeave={() => handleLeave(i)}
                   onClick={(e) => {
                     if (item.onClick) {
                       e.preventDefault();
@@ -256,19 +254,7 @@ const PillNav = ({
                     }
                   }}
                 >
-                  <span
-                    className="hover-circle"
-                    aria-hidden="true"
-                    ref={el => {
-                      circleRefs.current[i] = el;
-                    }}
-                  />
-                  <span className="label-stack">
-                    <span className="pill-label">{item.label}</span>
-                    <span className="pill-label-hover" aria-hidden="true">
-                      {item.label}
-                    </span>
-                  </span>
+                  {item.label}
                 </a>
               </li>
             ))}

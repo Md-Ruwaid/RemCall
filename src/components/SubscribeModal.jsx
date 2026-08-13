@@ -48,7 +48,7 @@ export default function SubscribeModal() {
         width: '100%',
         padding: '3rem 2.5rem',
         position: 'relative',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+        boxShadow: 'none'
       }}>
 
         {/* Close Button */}

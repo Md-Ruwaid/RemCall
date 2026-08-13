@@ -1,0 +1,47 @@
+.reveal-text-container {
+  display: block;
+  user-select: none;
+}
+
+.reveal-text-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.reveal-text-line {
+  --color-hover: #F5E6C8;
+  --color-active: #FFFFFF;
+  --color-start: #234656;
+
+  --stop-hover: 0%;
+  --stop-active: 0%;
+
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.15rem 0;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  width: fit-content;
+
+  background: linear-gradient(
+    90deg,
+    var(--color-hover) var(--stop-hover),
+    var(--color-active) var(--stop-hover),
+    var(--color-active) var(--stop-active),
+    var(--color-start) var(--stop-active)
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+  transition: transform 0.48s cubic-bezier(0.475, 0.425, 0, 0.995);
+}
+
+.reveal-text-line:hover {
+  transform: translateX(0.2ch);
+}
