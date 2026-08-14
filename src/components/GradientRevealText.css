@@ -15,12 +15,13 @@
   flex-wrap: wrap;
   align-items: center;
   font-family: var(--font-display, 'Space Grotesk', sans-serif);
-  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+  font-size: clamp(1.75rem, 6.5vw, 3.4rem);
   font-weight: 900;
-  line-height: 1.05;
+  line-height: 1.08;
   letter-spacing: -0.02em;
   text-transform: uppercase;
   margin: 0 0 0.15rem 0;
+  word-break: break-word;
 }
 
 .amber-sweep-char {

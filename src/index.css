@@ -563,3 +563,21 @@ html, body {
   to   { opacity: 0; width: 100%; }
 }
 
+/* Mobile Responsive Media Queries (<= 768px & <= 428px) */
+@media (max-width: 768px) {
+  .container-wide {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  input, button, select, textarea, .ringly-input, .primary-button, .btn-secondary {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  body, #root {
+    overflow-x: hidden;
+    width: 100%;
+  }
+}
+

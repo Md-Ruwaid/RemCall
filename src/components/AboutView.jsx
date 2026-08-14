@@ -1,8 +1,10 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export default function AboutView() {
-  const { setActiveView, setIsSubscribeModalOpen } = useApp();
+  const { setActiveView } = useApp();
+  const isMobile = useIsMobile(768);
 
   return (
     <div
@@ -11,8 +13,10 @@ export default function AboutView() {
         minHeight: '100vh',
         backgroundColor: 'var(--bg-dark)',
         color: 'var(--text-white)',
-        paddingTop: '6rem',
-        paddingBottom: '4rem'
+        paddingTop: isMobile ? '5.5rem' : '6rem',
+        paddingBottom: '4rem',
+        paddingLeft: isMobile ? '1rem' : '2rem',
+        paddingRight: isMobile ? '1rem' : '2rem'
       }}
     >
       <div className="container-wide" style={{ maxWidth: '960px', margin: '0 auto' }}>
@@ -30,7 +34,7 @@ export default function AboutView() {
 
         <h1 style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(2.4rem, 4vw, 3.8rem)',
+          fontSize: 'clamp(1.8rem, 5vw, 3.8rem)',
           fontWeight: 900,
           letterSpacing: '-0.02em',
           lineHeight: 1.1,
@@ -42,14 +46,14 @@ export default function AboutView() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '2.5rem',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: isMobile ? '1.5rem' : '2.5rem',
           marginBottom: '3rem'
         }}>
           {/* Column 1: Mission */}
-          <div className="ringly-card" style={{ padding: '2rem', borderRadius: '0px' }}>
+          <div className="ringly-card" style={{ padding: isMobile ? '1.5rem' : '2rem', borderRadius: '0px' }}>
             <h2 style={{
-              fontSize: '1.2rem',
+              fontSize: '1.1rem',
               fontWeight: 800,
               color: 'var(--accent-cream)',
               textTransform: 'uppercase',
@@ -58,7 +62,7 @@ export default function AboutView() {
               01. WHY WE BUILT THIS
             </h2>
             <p style={{
-              fontSize: '0.95rem',
+              fontSize: '0.92rem',
               color: 'var(--text-white)',
               lineHeight: 1.6,
               margin: 0
@@ -70,9 +74,9 @@ export default function AboutView() {
           </div>
 
           {/* Column 2: Operators */}
-          <div className="ringly-card" style={{ padding: '2rem', borderRadius: '0px' }}>
+          <div className="ringly-card" style={{ padding: isMobile ? '1.5rem' : '2rem', borderRadius: '0px' }}>
             <h2 style={{
-              fontSize: '1.2rem',
+              fontSize: '1.1rem',
               fontWeight: 800,
               color: 'var(--accent-cream)',
               textTransform: 'uppercase',
@@ -81,7 +85,7 @@ export default function AboutView() {
               02. REAL HUMAN OPERATORS
             </h2>
             <p style={{
-              fontSize: '0.95rem',
+              fontSize: '0.92rem',
               color: 'var(--text-white)',
               lineHeight: 1.6,
               margin: 0
@@ -98,12 +102,12 @@ export default function AboutView() {
           paddingTop: '2.5rem',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
+          alignItems: isMobile ? 'stretch' : 'center',
+          flexDirection: isMobile ? 'column' : 'row',
           gap: '1.5rem'
         }}>
           <div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, textTransform: 'uppercase' }}>
               READY TO END PROCRASTINATION?
             </div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
@@ -111,18 +115,18 @@ export default function AboutView() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '1rem', width: isMobile ? '100%' : 'auto' }}>
             <button
               onClick={() => setActiveView('how-it-works')}
               className="primary-button"
-              style={{ padding: '0.85rem 2rem' }}
+              style={{ padding: '0.85rem 2rem', minHeight: '44px', width: isMobile ? '100%' : 'auto' }}
             >
               HOW IT WORKS
             </button>
             <button
               onClick={() => setActiveView('home')}
               className="btn-secondary"
-              style={{ borderRadius: '0px' }}
+              style={{ borderRadius: '0px', minHeight: '44px', width: isMobile ? '100%' : 'auto' }}
             >
               RETURN HOME
             </button>

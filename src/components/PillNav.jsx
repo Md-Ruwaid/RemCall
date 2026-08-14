@@ -14,6 +14,7 @@ const PillNav = ({
   hoveredPillTextColor = '#10212A',
   pillTextColor,
   onMobileMenuClick,
+  visible = true,
   initialLoadAnimation = true
 }) => {
   const resolvedPillTextColor = pillTextColor ?? baseColor;
@@ -127,7 +128,7 @@ const PillNav = ({
   };
 
   return (
-    <div className="pill-nav-container">
+    <div className={`pill-nav-container${!visible ? ' is-hidden' : ''}`}>
       <nav className={`pill-nav ${className}`} aria-label="Primary" style={cssVars}>
         {logo && (
           <a

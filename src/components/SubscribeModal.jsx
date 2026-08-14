@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export default function SubscribeModal() {
   const {
@@ -13,6 +14,7 @@ export default function SubscribeModal() {
     setActiveView
   } = useApp();
 
+  const isMobile = useIsMobile(768);
   const [callsPerDay, setCallsPerDay] = useState(2);
   const [phone, setPhone] = useState('+1 (555) 019-2834');
   const [name, setName] = useState('Sarah Connor');
@@ -63,7 +65,7 @@ export default function SubscribeModal() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1.5rem'
+        padding: isMobile ? '1rem' : '1.5rem'
       }}
     >
       <div
@@ -71,7 +73,7 @@ export default function SubscribeModal() {
         style={{
           maxWidth: '520px',
           width: '100%',
-          padding: '2.5rem',
+          padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
           position: 'relative',
           background: 'var(--bg-card, #1C3644)',
           border: '1px solid var(--border-subtle, #3A5C6E)',
@@ -249,7 +251,7 @@ export default function SubscribeModal() {
                 <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
                   DAILY CALL ALLOWANCE (1–6 CALLS/DAY)
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.4rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)', gap: '0.5rem' }}>
                   {[1, 2, 3, 4, 5, 6].map((num) => (
                     <button
                       key={num}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 
+import { useIsMobile } from '../hooks/useIsMobile';
+
 /**
  * Ringly-themed Customer Testimonials (Placeholder Data)
  * Flagged clearly: These are placeholder Ringly-relevant operational testimonials.
@@ -47,6 +49,7 @@ export default function AuthView() {
     setActiveView
   } = useApp();
 
+  const isMobile = useIsMobile(768);
   const [authMode, setAuthMode] = useState('signup'); // 'signup' | 'login' | 'forgot'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -131,27 +134,27 @@ export default function AuthView() {
         minHeight: '100vh',
         backgroundColor: 'var(--bg-dark, #10212A)',
         color: 'var(--text-white)',
-        paddingTop: '6rem',
-        paddingBottom: '4rem',
+        paddingTop: isMobile ? '5.5rem' : '6rem',
+        paddingBottom: isMobile ? '3rem' : '4rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
       }}
     >
-      <div className="container-wide" style={{ maxWidth: '1180px', width: '100%', margin: '0 auto', padding: '0 1.5rem' }}>
+      <div className="container-wide" style={{ maxWidth: '1180px', width: '100%', margin: '0 auto', padding: isMobile ? '0 1rem' : '0 1.5rem' }}>
         
         {/* Main Authentication 3 Split-Panel Container */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: '2.5rem',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(340px, 1fr))',
+            gap: isMobile ? '1.75rem' : '2.5rem',
             alignItems: 'stretch',
             background: 'var(--bg-dark-secondary, #162C37)',
             border: '1.5px solid var(--border-subtle, #3A5C6E)',
             borderRadius: '0px',
             boxShadow: 'none',
-            padding: '2.5rem'
+            padding: isMobile ? '1.25rem' : '2.5rem'
           }}
         >
 
@@ -161,8 +164,8 @@ export default function AuthView() {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              gap: '2.5rem',
-              paddingRight: '1rem'
+              gap: isMobile ? '1.5rem' : '2.5rem',
+              paddingRight: isMobile ? 0 : '1rem'
             }}
           >
             <div>

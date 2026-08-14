@@ -1,32 +1,35 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { useIsMobile } from '../hooks/useIsMobile';
 import WriglyClock from './WriglyClock';
-import GradientRevealText from './GradientRevealText';
+import BlurText from './BlurText';
 import SpotlightButton from './SpotlightButton';
 
 export default function UnifiedMainView() {
   const { setActiveView } = useApp();
+  const isMobile = useIsMobile(768);
 
   return (
     <div
       className="view-fade-enter"
       style={{
-        height: '100vh',
-        maxHeight: '100vh',
+        height: isMobile ? 'auto' : '100vh',
+        minHeight: '100vh',
+        maxHeight: isMobile ? 'none' : '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        overflow: 'hidden',
-        paddingTop: '4.5rem',
-        paddingBottom: '1.25rem'
+        overflow: isMobile ? 'visible' : 'hidden',
+        paddingTop: isMobile ? '5.5rem' : '4.5rem',
+        paddingBottom: isMobile ? '2.5rem' : '1.25rem'
       }}
     >
       {/* Hero Content Section */}
       <div className="container-wide" style={{ width: '100%', flex: 1, display: 'flex', alignItems: 'center' }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-          gap: '3rem',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: isMobile ? '2rem' : '3rem',
           alignItems: 'center',
           width: '100%'
         }}>
@@ -43,13 +46,35 @@ export default function UnifiedMainView() {
               [ SERVICE TYPE: HUMAN OPERATOR TELEPHONY ]
             </div>
 
-            {/* GSAP Gradient Reveal Main Headline */}
-            <div style={{ marginBottom: '1.75rem' }}>
-              <GradientRevealText lines={["WE CALL.", "YOU REMEMBER."]} />
+            {/* React Bits BlurText Main Headline */}
+            <div style={{
+              marginBottom: '1.75rem',
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.75rem, 6.5vw, 3.4rem)',
+              fontWeight: 900,
+              textTransform: 'uppercase',
+              color: 'var(--text-white)',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.08
+            }}>
+              <BlurText
+                text="WE CALL."
+                delay={150}
+                animateBy="words"
+                direction="top"
+                stepDuration={0.35}
+              />
+              <BlurText
+                text="YOU REMEMBER."
+                delay={150}
+                animateBy="words"
+                direction="top"
+                stepDuration={0.35}
+              />
             </div>
 
             <p style={{
-              fontSize: 'clamp(1.18rem, 1.9vw, 1.4rem)',
+              fontSize: 'clamp(1.1rem, 1.9vw, 1.4rem)',
               fontWeight: 600,
               color: 'var(--accent-cream)',
               lineHeight: 1.4,
@@ -70,22 +95,22 @@ export default function UnifiedMainView() {
           </div>
 
           {/* Right Column: The Wrigly Clock Hero Animation */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <WriglyClock size={400} />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: isMobile ? '1rem 0' : 0 }}>
+            <WriglyClock size={isMobile ? 270 : 400} />
           </div>
 
         </div>
       </div>
 
       {/* Operational Rate & Limit Info Bar at the Complete End of the Website */}
-      <div className="container-wide" style={{ width: '100%' }}>
+      <div className="container-wide" style={{ width: '100%', marginTop: isMobile ? '2rem' : 0 }}>
         <div className="font-mono" style={{
           fontSize: '0.78rem',
           color: 'var(--text-muted)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          gap: '1.5rem',
+          gap: isMobile ? '0.75rem' : '1.5rem',
           flexWrap: 'wrap',
           borderTop: '1px solid var(--border-subtle)',
           paddingTop: '1rem',

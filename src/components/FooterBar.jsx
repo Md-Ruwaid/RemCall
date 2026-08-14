@@ -1,8 +1,10 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export default function FooterBar() {
   const { activeView, setActiveView } = useApp();
+  const isMobile = useIsMobile(768);
 
   const getSlideNumber = () => {
     switch (activeView) {
@@ -25,13 +27,16 @@ export default function FooterBar() {
     }}>
       <div className="container-wide" style={{
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'flex-start' : 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '1.25rem',
+        gap: isMobile ? '1rem' : '1.25rem',
         fontSize: '0.78rem',
         fontFamily: 'var(--font-display)',
-        color: 'var(--text-muted)'
+        color: 'var(--text-muted)',
+        paddingLeft: isMobile ? '1rem' : '1.5rem',
+        paddingRight: isMobile ? '1rem' : '1.5rem'
       }}>
         {/* Left: Brand Name Bold + Operational Pitch */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -64,14 +69,14 @@ export default function FooterBar() {
         </div>
 
         {/* Right: Slide Deck Counter & Quick Navigation */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
           <span style={{ color: 'var(--accent-cream)', letterSpacing: '0.06em', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
             SLIDE {getSlideNumber()}
           </span>
           <button
             onClick={() => setActiveView(activeView === 'home' ? 'dashboard' : 'home')}
             className="nav-link-btn"
-            style={{ fontSize: '0.72rem', padding: '0.4rem 0.85rem' }}
+            style={{ fontSize: '0.72rem', padding: '0.4rem 0.85rem', minHeight: '38px' }}
           >
             {activeView === 'home' ? 'MY REMINDERS →' : '← SERVICE OVERVIEW'}
           </button>

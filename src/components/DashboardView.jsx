@@ -1,38 +1,40 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export default function DashboardView() {
-  const { user, reminders, addReminder, deleteReminder, updateReminderStatus, logoutUser } = useApp();
-
+  const { user, reminders, addReminder, logoutUser, activeView } = useApp();
+  const isMobile = useIsMobile(768);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newTime, setNewTime] = useState('');
   const [newNotes, setNewNotes] = useState('');
 
-  const handleAddSubmit = (e) => {
+  const callsRemainingToday = Math.max(0, user.dailyCallLimit - user.callsUsedToday);
+
+  const handleAddSubmit = async (e) => {
     e.preventDefault();
-    if (!newTitle.trim() || !newTime.trim()) return;
-    addReminder(newTitle, newTime, newNotes);
+    if (!newTitle || !newTime) return;
+
+    await addReminder(newTitle, newTime, newNotes);
     setNewTitle('');
     setNewTime('');
     setNewNotes('');
     setIsAddModalOpen(false);
   };
 
-  const callsRemainingToday = Math.max(0, user.dailyCallLimit - user.callsUsedToday);
-
   return (
     <div
       className="view-fade-enter"
       style={{
         minHeight: '100vh',
-        backgroundColor: 'var(--bg-dark)',
+        backgroundColor: 'var(--bg-dark, #0F212A)',
         color: 'var(--text-white)',
-        paddingTop: '6rem',
-        paddingBottom: '5rem'
+        paddingTop: isMobile ? '5.5rem' : '6rem',
+        paddingBottom: isMobile ? '3rem' : '5rem'
       }}
     >
-      <div className="container-wide" style={{ maxWidth: '1080px', margin: '0 auto', padding: '0 1.5rem' }}>
+      <div className="container-wide" style={{ maxWidth: '1080px', margin: '0 auto', padding: isMobile ? '0 1rem' : '0 1.5rem' }}>
         
         {/* Header Readout Bar */}
         <div

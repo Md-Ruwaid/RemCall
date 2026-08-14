@@ -10,8 +10,14 @@ import ResetPasswordView from './components/ResetPasswordView';
 import SubscribeModal from './components/SubscribeModal';
 import ClickSpark from './components/ClickSpark';
 
+import { useIsMobile } from './hooks/useIsMobile';
+import { useScrollDirection } from './hooks/useScrollDirection';
+
 function AppShell() {
   const { activeView, setActiveView, isAuthenticated } = useApp();
+  const isMobile = useIsMobile(768);
+  const { scrollDirection, isAtTop } = useScrollDirection();
+  const isHeaderVisible = isAtTop || scrollDirection === 'up';
 
   const handleNavClick = (view) => {
     if (view === 'dashboard' && !isAuthenticated) {
@@ -48,6 +54,8 @@ function AppShell() {
     }
   }, [setActiveView]);
 
+  const isHomeLocked = activeView === 'home' && !isMobile;
+
   return (
     <ClickSpark
       sparkColor="#F5E6C8"
@@ -59,27 +67,31 @@ function AppShell() {
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        height: activeView === 'home' ? '100vh' : 'auto',
+        height: isHomeLocked ? '100vh' : 'auto',
         minHeight: '100vh',
         backgroundColor: 'var(--bg-dark)',
         position: 'relative',
-        overflow: activeView === 'home' ? 'hidden' : 'visible'
+        overflow: isHomeLocked ? 'hidden' : 'visible'
       }}>
 
-        {/* Top Logo — fixed top-left */}
+        {/* Top Logo — fixed top-left (Hides on scroll down, shows on scroll up) */}
         <div
           onClick={() => handleNavClick('home')}
           style={{
             position: 'fixed',
-            top: '1.5rem',
-            left: '2.5rem',
+            top: isMobile ? '1.25rem' : '1.5rem',
+            left: isMobile ? '1.25rem' : '2.5rem',
             zIndex: 60,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-160%)',
+            opacity: isHeaderVisible ? 1 : 0,
+            transition: 'transform 0.35s ease, opacity 0.35s ease',
+            pointerEvents: isHeaderVisible ? 'auto' : 'none'
           }}
         >
           <div style={{
             fontFamily: 'var(--font-display)',
-            fontSize: '1.4rem',
+            fontSize: isMobile ? '1.25rem' : '1.4rem',
             fontWeight: 800,
             letterSpacing: '0.08em',
             color: 'var(--text-white)',
@@ -91,6 +103,7 @@ function AppShell() {
 
         {/* React Bits PillNav Component (Home, About Us, Dashboard, Auth) */}
         <PillNav
+          visible={isHeaderVisible}
           logoAlt="Ringly Logo"
           items={navItems}
           activeHref={`#${activeView}`}

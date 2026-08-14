@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { StickyScroll } from './StickyScroll';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 /**
- * HowItWorksView — 100vh locked, full-page background animates on scroll.
- * Page does NOT scroll. Only the StickyScroll container scrolls internally.
+ * HowItWorksView — 100vh locked on desktop, full-page background animates on scroll.
  */
 
 // Background colors that sweep the entire page per card
@@ -17,6 +17,7 @@ const pageBackgrounds = [
 
 export default function HowItWorksView() {
   const [activeCard, setActiveCard] = useState(0);
+  const isMobile = useIsMobile(768);
 
   const content = [
     {
@@ -26,7 +27,7 @@ export default function HowItWorksView() {
       content: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 01 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>UNDER PRESSURE</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>UNDER PRESSURE</span>
         </div>
       ),
     },
@@ -37,7 +38,7 @@ export default function HowItWorksView() {
       content: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 02 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DIRECT VOICE CALL</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DIRECT VOICE CALL</span>
         </div>
       ),
     },
@@ -48,7 +49,7 @@ export default function HowItWorksView() {
       content: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 03 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DEADLINE AWARENESS</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DEADLINE AWARENESS</span>
         </div>
       ),
     },
@@ -59,7 +60,7 @@ export default function HowItWorksView() {
       content: (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 04 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>HUMAN ACCOUNTABILITY</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>HUMAN ACCOUNTABILITY</span>
         </div>
       ),
     },
@@ -81,11 +82,11 @@ export default function HowItWorksView() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '6rem 2rem 2rem 2rem',
+        padding: isMobile ? '5.5rem 1rem 1rem 1rem' : '6rem 2rem 2rem 2rem',
         boxSizing: 'border-box',
       }}
     >
-      <div style={{ width: '100%', maxWidth: '1080px' }}>
+      <div style={{ width: '100%', maxWidth: '1080px', height: '100%' }}>
         <StickyScroll
           content={content}
           onActiveCardChange={setActiveCard}
