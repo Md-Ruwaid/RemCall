@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '../context/AppContext';
 
 export const StickyScroll = ({
   content,
@@ -11,42 +12,44 @@ export const StickyScroll = ({
   const prevCard = useRef(0);
   const scrollerRef = useRef(null);
   const itemRefs = useRef([]);
+  const { setIsSubscribeModalOpen } = useApp();
 
-  // IntersectionObserver — fires exactly when each item enters the scroll container
+  // Direct scroll detection: pick the card whose center is closest to the container's center
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
-    const observers = [];
+    const onScroll = () => {
+      const scrollCenter = scroller.scrollTop + scroller.clientHeight / 2;
+      let closestIndex = 0;
+      let closestDist = Infinity;
 
-    itemRefs.current.forEach((el, index) => {
-      if (!el) return;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const newDir = index > prevCard.current ? 1 : -1;
-              setDirection(newDir);
-              prevCard.current = index;
-              setActiveCard(index);
-              onActiveCardChange?.(index);
-            }
-          });
-        },
-        {
-          root: scroller,           // observe relative to the scroll container
-          rootMargin: '-30% 0px -30% 0px', // fires when item is in the middle third
-          threshold: 0,
+      itemRefs.current.forEach((el, index) => {
+        if (!el) return;
+        const itemCenter = el.offsetTop + el.offsetHeight / 2;
+        const dist = Math.abs(scrollCenter - itemCenter);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestIndex = index;
         }
-      );
+      });
 
-      observer.observe(el);
-      observers.push(observer);
-    });
+      if (closestIndex !== prevCard.current) {
+        const newDir = closestIndex > prevCard.current ? 1 : -1;
+        setDirection(newDir);
+        prevCard.current = closestIndex;
+        setActiveCard(closestIndex);
+        onActiveCardChange?.(closestIndex);
+      }
+    };
 
-    return () => observers.forEach((o) => o.disconnect());
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+    // Run once on mount to set initial active card
+    onScroll();
+
+    return () => scroller.removeEventListener('scroll', onScroll);
   }, [onActiveCardChange]);
+
 
   // Spring config — tight, zero wobble
   const spring = { type: "spring", stiffness: 420, damping: 42 };
@@ -135,7 +138,15 @@ export const StickyScroll = ({
               </div>
             );
           })}
-          <div style={{ height: '28rem' }} />
+          {/* Subscribe button — appears after scrolling all 4 cards */}
+          <div style={{ height: '6rem' }} />
+          <div style={{ display: 'flex', justifyContent: 'flex-start', paddingBottom: '4rem' }}>
+            <button className="btn-96" onClick={() => setIsSubscribeModalOpen(true)}>
+              <span>Subscribe</span>
+              Subscribe
+            </button>
+          </div>
+
         </div>
       </div>
 

@@ -423,3 +423,110 @@ html, body {
   background: var(--border-subtle);
   border-radius: 0px;
 }
+
+/* ─── Subscribe Button (UIverse btn-96) — Ringly Themed ─── */
+.btn-96,
+.btn-96 *,
+.btn-96 :after,
+.btn-96 :before,
+.btn-96:after,
+.btn-96:before {
+  border: 0 solid;
+  box-sizing: border-box;
+}
+
+.btn-96 {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: button;
+  background-color: var(--bg-dark);
+  background-image: none;
+  color: var(--text-white);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 100%;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-96:disabled {
+  cursor: default;
+}
+
+.btn-96:-moz-focusring {
+  outline: auto;
+}
+
+.btn-96 svg {
+  display: block;
+  vertical-align: middle;
+}
+
+.btn-96 [hidden] {
+  display: none;
+}
+
+.btn-96 {
+  box-sizing: border-box;
+  display: block;
+  font-weight: 900;
+  -webkit-mask-image: none;
+  padding: 1.4rem 5rem;
+  perspective: 800px;
+  position: relative;
+  text-transform: uppercase;
+  transform-style: preserve-3d;
+  letter-spacing: 0.12em;
+}
+
+.btn-96 span {
+  background: var(--accent-cream);
+  color: var(--bg-dark);
+  display: grid;
+  inset: 0;
+  place-items: center;
+  position: absolute;
+  transform: rotateX(0deg);
+  transform-origin: top center;
+  transition: 0.2s;
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.btn-96:hover span {
+  transform: rotateX(35deg);
+}
+
+.btn-96:after,
+.btn-96:before {
+  background: var(--bg-dark-secondary);
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: rotateX(0deg);
+  width: 100%;
+  z-index: -1;
+}
+
+.btn-96:after {
+  background: var(--border-subtle);
+  width: 0;
+}
+
+.btn-96:hover:after {
+  animation: progress-bar 1.2s;
+}
+
+@keyframes progress-bar {
+  0%   { opacity: 1; width: 0; }
+  10%  { opacity: 1; width: 15%; }
+  25%  { opacity: 1; width: 25%; }
+  40%  { opacity: 1; width: 35%; }
+  55%  { opacity: 1; width: 75%; }
+  60%  { opacity: 1; width: 100%; }
+  to   { opacity: 0; width: 100%; }
+}
+
