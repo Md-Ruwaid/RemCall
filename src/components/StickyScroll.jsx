@@ -1,218 +1,257 @@
-import React, { useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useScroll } from 'framer-motion';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const StickyScroll = ({
   content,
-  contentClassName = ''
+  contentClassName = '',
+  onActiveCardChange
 }) => {
   const [activeCard, setActiveCard] = useState(0);
-  const ref = useRef(null);
-  
-  const { scrollYProgress } = useScroll({
-    container: ref,
-    offset: ["start start", "end start"],
-  });
-  
-  const cardLength = content.length;
+  const [direction, setDirection] = useState(1);
+  const prevCard = useRef(0);
+  const scrollerRef = useRef(null);
+  const itemRefs = useRef([]);
 
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const cardsBreakpoints = content.map((_, index) => index / cardLength);
-    const closestBreakpointIndex = cardsBreakpoints.reduce(
-      (acc, breakpoint, index) => {
-        const distance = Math.abs(latest - breakpoint);
-        if (distance < Math.abs(latest - cardsBreakpoints[acc])) {
-          return index;
+  // IntersectionObserver — fires exactly when each item enters the scroll container
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    const observers = [];
+
+    itemRefs.current.forEach((el, index) => {
+      if (!el) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const newDir = index > prevCard.current ? 1 : -1;
+              setDirection(newDir);
+              prevCard.current = index;
+              setActiveCard(index);
+              onActiveCardChange?.(index);
+            }
+          });
+        },
+        {
+          root: scroller,           // observe relative to the scroll container
+          rootMargin: '-30% 0px -30% 0px', // fires when item is in the middle third
+          threshold: 0,
         }
-        return acc;
-      },
-      0
-    );
-    setActiveCard(closestBreakpointIndex);
-  });
+      );
+
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [onActiveCardChange]);
+
+  // Spring config — tight, zero wobble
+  const spring = { type: "spring", stiffness: 420, damping: 42 };
+  const fadeEase = { duration: 0.28, ease: [0.16, 1, 0.3, 1] };
 
   return (
     <div
-      ref={ref}
+      ref={scrollerRef}
       style={{
         position: 'relative',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        gap: '3rem',
-        height: '36rem',
+        gap: '2rem',
+        height: '30rem',
         overflowY: 'auto',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
         borderRadius: '0px',
         padding: '2.5rem',
-        background: 'var(--bg-dark)',
-        border: '1px solid var(--border-subtle)'
+        background: 'transparent',
       }}
     >
-      {/* Left Column: Scrollable text items with sharp restrained transitions */}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', padding: '0 1rem', width: '100%', maxWidth: '580px' }}>
-        
-        {/* Vertical Progress Rail (Track: var(--border-subtle), Fill: var(--accent-cream)) */}
-        <div style={{
-          position: 'absolute',
-          left: 0,
-          top: '2rem',
-          bottom: '12rem',
-          width: '2px',
-          background: 'var(--border-subtle)'
-        }}>
-          <motion.div
-            animate={{
-              height: `${((activeCard + 1) / cardLength) * 100}%`
-            }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            style={{
-              width: '100%',
-              background: 'var(--accent-cream)'
-            }}
-          />
-        </div>
+      <style>{`#sticky-left::-webkit-scrollbar { display: none; }`}</style>
 
-        <div style={{ width: '100%', paddingLeft: '1.75rem' }}>
-          {content.map((item, index) => (
-            <div key={item.title + index} style={{ margin: '6.5rem 0' }}>
-              
-              {/* Step Monospace Tag */}
-              <motion.div
-                initial={{ opacity: 0.3 }}
-                animate={{ opacity: activeCard === index ? 1 : 0.3 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="font-mono"
-                style={{
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  color: activeCard === index ? 'var(--accent-cream)' : 'var(--text-muted)',
-                  letterSpacing: '0.08em',
-                  marginBottom: '0.75rem'
-                }}
+      {/* Left: text column */}
+      <div id="sticky-left" style={{ position: 'relative', maxWidth: '560px', width: '100%' }}>
+        <div style={{ width: '100%' }}>
+          {content.map((item, index) => {
+            const isActive = activeCard === index;
+            return (
+              <div
+                key={item.title + index}
+                ref={(el) => (itemRefs.current[index] = el)}
+                style={{ marginTop: '5rem', marginBottom: '5rem' }}
               >
-                [ 0{index + 1} / ACCOUNTABILITY PROTOCOL ]
-              </motion.div>
+                {/* Step marker */}
+                <motion.div
+                  animate={{ opacity: isActive ? 1 : 0.3, x: isActive ? 0 : -6 }}
+                  transition={fadeEase}
+                  className="font-mono"
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: 'var(--accent-cream)',
+                    letterSpacing: '0.1em',
+                    marginBottom: '0.65rem',
+                  }}
+                >
+                  [ 0{index + 1} / ACCOUNTABILITY PROTOCOL ]
+                </motion.div>
 
-              {/* Title */}
-              <motion.h2
-                initial={{ opacity: 0.25 }}
-                animate={{ opacity: activeCard === index ? 1 : 0.25 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                style={{
-                  fontFamily: 'var(--font-display, Space Grotesk, sans-serif)',
-                  fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)',
-                  fontWeight: 800,
-                  textTransform: 'uppercase',
-                  color: activeCard === index ? 'var(--text-white)' : 'var(--text-muted)',
-                  lineHeight: 1.2
-                }}
-              >
-                {item.title}
-              </motion.h2>
+                {/* Title */}
+                <motion.h2
+                  animate={{ opacity: isActive ? 1 : 0.2, y: isActive ? 0 : 8, scale: isActive ? 1 : 0.98 }}
+                  transition={fadeEase}
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)',
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                    color: 'var(--text-white)',
+                    lineHeight: 1.2,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {item.title}
+                </motion.h2>
 
-              {/* Description */}
-              <motion.p
-                initial={{ opacity: 0.25 }}
-                animate={{ opacity: activeCard === index ? 1 : 0.25 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                style={{
-                  fontFamily: 'var(--font-mono, Space Mono, monospace)',
-                  fontSize: '0.95rem',
-                  color: 'var(--text-muted)',
-                  marginTop: '1rem',
-                  lineHeight: 1.6,
-                  textTransform: 'uppercase'
-                }}
-              >
-                {item.description}
-              </motion.p>
-            </div>
-          ))}
-          <div style={{ height: '10rem' }} />
+                {/* Description */}
+                <motion.p
+                  animate={{ opacity: isActive ? 1 : 0.2, y: isActive ? 0 : 10 }}
+                  transition={{ ...fadeEase, delay: isActive ? 0.05 : 0 }}
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.95rem',
+                    color: 'var(--accent-cream)',
+                    marginTop: '1rem',
+                    lineHeight: 1.6,
+                    textTransform: 'uppercase',
+                    maxWidth: '480px',
+                  }}
+                >
+                  {item.description}
+                </motion.p>
+              </div>
+            );
+          })}
+          <div style={{ height: '28rem' }} />
         </div>
       </div>
 
-      {/* Right Column: Flat var(--bg-card) Card with 1px var(--border-subtle), 0px corners, 0 shadows, and tactical accents */}
+      {/* Right: sticky panel */}
       <div
         style={{
-          background: 'var(--bg-card, #1C3644)',
-          border: '1px solid var(--border-subtle, #3A5C6E)',
-          borderRadius: '0px',
-          boxShadow: 'none',
           position: 'sticky',
           top: '2rem',
-          height: '20rem',
-          width: '24rem',
           flexShrink: 0,
+          width: '22rem',
+          height: '18rem',
+          overflow: 'hidden',
+          borderRadius: '0px',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'none',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '2rem',
-          boxSizing: 'border-box'
+          padding: '1.75rem',
+          boxSizing: 'border-box',
         }}
         className={contentClassName}
       >
-        {/* Tactical Corner Accents & Top Border */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '2px',
-          background: 'var(--accent-cream)'
-        }} />
+        {/* Accent bar sweeps on card change */}
+        <motion.div
+          key={`accent-${activeCard}`}
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0,
+            height: '2px',
+            background: 'var(--accent-cream)',
+            transformOrigin: 'left',
+          }}
+        />
 
-        {/* Top Header Row inside Card: Step Label & Numeric Counter */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <div className="font-mono" style={{
-            fontSize: '0.78rem',
-            fontWeight: 700,
-            color: 'var(--text-muted)',
-            letterSpacing: '0.08em'
-          }}>
-            [ STEP 0{activeCard + 1} ]
-          </div>
-
-          <div className="font-mono" style={{
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            color: 'var(--text-muted)',
-            letterSpacing: '0.05em'
-          }}>
-            0{activeCard + 1} / 0{cardLength}
-          </div>
+        {/* Header: step + counter */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={`step-${activeCard}`}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.18 }}
+              className="font-mono"
+              style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.08em' }}
+            >
+              [ STEP 0{activeCard + 1} ]
+            </motion.span>
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={`ctr-${activeCard}`}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.18 }}
+              className="font-mono"
+              style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}
+            >
+              0{activeCard + 1} / 0{content.length}
+            </motion.span>
+          </AnimatePresence>
         </div>
 
-        {/* Card Main Title & Content (White 800 weight Space Grotesk) */}
-        <div style={{ margin: 'auto 0', textAlign: 'center' }}>
-          <h3 style={{
-            fontFamily: 'var(--font-display, Space Grotesk, sans-serif)',
-            fontWeight: 800,
-            fontSize: '1.4rem',
-            color: 'var(--text-white)',
-            textTransform: 'uppercase',
-            lineHeight: 1.25,
-            marginBottom: '0.5rem'
-          }}>
-            {content[activeCard]?.contentTitle || content[activeCard]?.title}
-          </h3>
+        {/* Content: directional slide */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={activeCard}
+              custom={direction}
+              initial={{ opacity: 0, y: direction * 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: direction * -20 }}
+              transition={spring}
+              style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              {content[activeCard]?.content ?? (
+                <h3 style={{
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 800,
+                  fontSize: '1.35rem',
+                  color: 'var(--text-white)',
+                  textTransform: 'uppercase',
+                  textAlign: 'center',
+                }}>
+                  {content[activeCard]?.contentTitle}
+                </h3>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* Bottom Tactical Footer Line inside Card */}
+        {/* Footer */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
           borderTop: '1px solid var(--border-subtle)',
-          paddingTop: '0.75rem'
+          paddingTop: '0.65rem',
         }}>
-          <span className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+          <motion.span
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="font-mono"
+            style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}
+          >
             STATUS: ACTIVE
-          </span>
-          <span className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--accent-cream)' }}>
+          </motion.span>
+          <span className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--accent-cream)' }}>
             VERIFIED PROTOCOL
           </span>
         </div>
-
       </div>
     </div>
   );

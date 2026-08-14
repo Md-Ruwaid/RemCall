@@ -1,49 +1,96 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { StickyScroll } from './StickyScroll';
 
 /**
- * HowItWorksView Component
- * 
- * Renders StickyScroll reveal component aligned with Ringly's strict theme tokens.
+ * HowItWorksView — 100vh locked, full-page background animates on scroll.
+ * Page does NOT scroll. Only the StickyScroll container scrolls internally.
  */
+
+// Background colors that sweep the entire page per card
+const pageBackgrounds = [
+  "#10212A",  // card 1 — --bg-dark
+  "#152534",  // card 2 — deep navy
+  "#1a1220",  // card 3 — near-black with purple undertone
+  "#12221A",  // card 4 — deep forest-dark
+];
+
 export default function HowItWorksView() {
+  const [activeCard, setActiveCard] = useState(0);
+
   const content = [
     {
       title: "UNDER PRESSURE, THINGS SLIP.",
       description: "WORK STRESS DOESN'T LEAVE ROOM FOR ONE MORE THING TO REMEMBER.",
-      contentTitle: "UNDER PRESSURE"
+      contentTitle: "UNDER PRESSURE",
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 01 ]</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>UNDER PRESSURE</span>
+        </div>
+      ),
     },
     {
       title: "NOTIFICATIONS GET IGNORED. CALLS DON'T.",
       description: "A BUZZ IS BACKGROUND NOISE — A VOICE ISN'T.",
-      contentTitle: "DIRECT VOICE CALL"
+      contentTitle: "DIRECT VOICE CALL",
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 02 ]</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DIRECT VOICE CALL</span>
+        </div>
+      ),
     },
     {
       title: "IN A DISTRACTED WORLD,",
       description: "DEADLINES GET MISSED.",
-      contentTitle: "DEADLINE AWARENESS"
+      contentTitle: "DEADLINE AWARENESS",
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 03 ]</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DEADLINE AWARENESS</span>
+        </div>
+      ),
     },
     {
       title: "A CALL YOU'RE ACCOUNTABLE TO",
       description: "KEEPS YOU AWARE — NOT JUST ALERTED.",
-      contentTitle: "HUMAN ACCOUNTABILITY"
+      contentTitle: "HUMAN ACCOUNTABILITY",
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 04 ]</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.3rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>HUMAN ACCOUNTABILITY</span>
+        </div>
+      ),
     },
   ];
 
   return (
-    <div
+    // Full page background animates here — covers the entire viewport
+    <motion.div
       className="view-fade-enter"
+      animate={{
+        backgroundColor: pageBackgrounds[activeCard % pageBackgrounds.length],
+      }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
-        minHeight: '100vh',
-        backgroundColor: 'var(--bg-dark)',
+        height: '100vh',
+        overflow: 'hidden',
         color: 'var(--text-white)',
-        paddingTop: '6rem',
-        paddingBottom: '5rem'
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '6rem 2rem 2rem 2rem',
+        boxSizing: 'border-box',
       }}
     >
-      <div className="container-wide" style={{ maxWidth: '1080px', margin: '0 auto' }}>
-        <StickyScroll content={content} />
+      <div style={{ width: '100%', maxWidth: '1080px' }}>
+        <StickyScroll
+          content={content}
+          onActiveCardChange={setActiveCard}
+        />
       </div>
-    </div>
+    </motion.div>
   );
 }
