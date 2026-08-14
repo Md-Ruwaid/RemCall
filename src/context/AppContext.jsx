@@ -50,10 +50,10 @@ export function AppProvider({ children }) {
   };
 
   // Load User Profile & Reminders from DB
-  const loadUserData = useCallback(async (userId) => {
+  const loadUserData = useCallback(async (userId, userMetadata = {}) => {
     try {
       const [profileData, remindersData] = await Promise.all([
-        fetchUserProfileApi(userId),
+        fetchUserProfileApi(userId, userMetadata),
         fetchRemindersApi()
       ]);
 
@@ -62,7 +62,7 @@ export function AppProvider({ children }) {
       }
       setReminders(remindersData || []);
     } catch (err) {
-      console.error('Error loading user profile or reminders:', err);
+      console.warn('Error loading user profile or reminders:', err);
     }
   }, []);
 

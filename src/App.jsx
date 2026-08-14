@@ -21,12 +21,18 @@ function AppShell() {
     }
   };
 
-  const navItems = [
-    { label: 'Home', href: '#home', onClick: () => handleNavClick('home') },
-    { label: 'About Us', href: '#about', onClick: () => handleNavClick('about') },
-    { label: 'Dashboard', href: '#dashboard', onClick: () => handleNavClick('dashboard') },
-    { label: isAuthenticated ? 'Account' : 'Log In / Sign Up', href: '#auth', onClick: () => handleNavClick('auth') }
-  ];
+  const navItems = isAuthenticated
+    ? [
+        { label: 'Home', href: '#home', onClick: () => handleNavClick('home') },
+        { label: 'About Us', href: '#about', onClick: () => handleNavClick('about') },
+        { label: 'Dashboard', href: '#dashboard', onClick: () => handleNavClick('dashboard') },
+        { label: 'Account', href: '#auth', onClick: () => handleNavClick('auth') }
+      ]
+    : [
+        { label: 'Home', href: '#home', onClick: () => handleNavClick('home') },
+        { label: 'About Us', href: '#about', onClick: () => handleNavClick('about') },
+        { label: 'Log In / Sign Up', href: '#auth', onClick: () => handleNavClick('auth') }
+      ];
 
   // Route Guard: redirect unauthenticated users away from /dashboard
   useEffect(() => {

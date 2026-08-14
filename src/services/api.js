@@ -36,15 +36,30 @@ export async function loginWithEmailApi(email, password) {
  * Log In with Google OAuth (Browser Redirect)
  */
 export async function loginWithGoogleApi() {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin
-    }
-  });
+  try {
+    const redirectTo = window.location.origin;
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'select_account'
+        }
+      }
+    });
 
-  if (error) throw error;
-  return data;
+    if (error) {
+      if (error.message?.toLowerCase().includes('disabled') || error.message?.toLowerCase().includes('not enabled')) {
+        throw new Error('Google Sign-In is disabled in your Supabase Dashboard. Go to Authentication → Providers → Google and switch it ON.');
+      }
+      throw error;
+    }
+    return data;
+  } catch (err) {
+    console.error('Google OAuth Error:', err);
+    throw err;
+  }
 }
 
 /**
@@ -90,19 +105,47 @@ export async function getCurrentSessionApi() {
 }
 
 /**
- * Fetch Subscriber Profile Data from DB
+ * Fetch Subscriber Profile Data from DB (with auto-upsert fallback)
  */
-export async function fetchUserProfileApi(userId) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
+export async function fetchUserProfileApi(userId, metaData = {}) {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-  if (error && error.code !== 'PGRST116') {
-    console.error('Error fetching user profile:', error);
+    if (error) {
+      // Row not found (PGRST116) — create default profile
+      if (error.code === 'PGRST116') {
+        const defaultProfile = {
+          id: userId,
+          name: metaData.full_name || metaData.name || 'Subscriber',
+          phone: metaData.phone || '',
+          subscription_active: false,
+          daily_call_limit: 1,
+          calls_used_today: 0,
+          plan_name: 'Basic Protocol'
+        };
+
+        const { data: createdProfile, error: createError } = await supabase
+          .from('profiles')
+          .upsert([defaultProfile])
+          .select()
+          .single();
+
+        if (!createError && createdProfile) {
+          return createdProfile;
+        }
+        return defaultProfile;
+      }
+      console.warn('Profile fetch note:', error.message);
+    }
+    return data;
+  } catch (err) {
+    console.warn('Profile fetch exception:', err);
+    return null;
   }
-  return data;
 }
 
 /**

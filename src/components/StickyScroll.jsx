@@ -12,7 +12,15 @@ export const StickyScroll = ({
   const prevCard = useRef(0);
   const scrollerRef = useRef(null);
   const itemRefs = useRef([]);
-  const { setIsSubscribeModalOpen } = useApp();
+  const { setIsSubscribeModalOpen, isAuthenticated, setActiveView } = useApp();
+
+  const handleSubscribeClick = () => {
+    if (!isAuthenticated) {
+      setActiveView('auth');
+    } else {
+      setIsSubscribeModalOpen(true);
+    }
+  };
 
   // Direct scroll detection: pick the card whose center is closest to the container's center
   useEffect(() => {
@@ -141,7 +149,7 @@ export const StickyScroll = ({
           {/* Subscribe button — appears after scrolling all 4 cards */}
           <div style={{ height: '6rem' }} />
           <div style={{ display: 'flex', justifyContent: 'flex-start', paddingBottom: '4rem' }}>
-            <button className="btn-96" onClick={() => setIsSubscribeModalOpen(true)}>
+            <button className="btn-96" onClick={handleSubscribeClick}>
               <span>Subscribe</span>
               Subscribe
             </button>
