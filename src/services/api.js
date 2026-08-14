@@ -1,128 +1,166 @@
-/**
- * Ringly API Client Service
- * Encapsulates authentication, subscription, and reminder endpoints
- * matching the Dev A / Dev B integration contract (Section 8 of Blueprint).
- */
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+import { supabase } from './supabaseClient';
 
 /**
- * Persist JWT Token in local storage
- */
-export function setAuthToken(token) {
-  if (token) {
-    localStorage.setItem('ringly_jwt', token);
-  } else {
-    localStorage.removeItem('ringly_jwt');
-  }
-}
-
-export function getAuthToken() {
-  return localStorage.getItem('ringly_jwt');
-}
-
-/**
- * Authenticate with Google OAuth Credential
- * POST /api/auth/google
- */
-export async function loginWithGoogleApi(googleCredential) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/google`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credential: googleCredential })
-    });
-
-    if (!response.ok) {
-      throw new Error('Google Authentication failed on server.');
-    }
-
-    const data = await response.json();
-    setAuthToken(data.token);
-    return data;
-  } catch (error) {
-    console.warn('API Endpoint unreachable, utilizing client JWT session fallback:', error.message);
-    // Standalone fallback token generation for frontend testing
-    const fallbackToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.google.${Date.now()}`;
-    setAuthToken(fallbackToken);
-    return {
-      token: fallbackToken,
-      user: {
-        name: 'Verified Google User',
-        email: 'google.user@example.com',
-        phone: '+1 (555) 019-2834',
-        subscriptionActive: true
-      }
-    };
-  }
-}
-
-/**
- * Authenticate with Email & Password
- * POST /api/auth/login
- */
-export async function loginWithEmailApi(email, password) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-
-    if (!response.ok) {
-      throw new Error('Invalid email or password.');
-    }
-
-    const data = await response.json();
-    setAuthToken(data.token);
-    return data;
-  } catch (error) {
-    console.warn('API Endpoint unreachable, utilizing client JWT session fallback:', error.message);
-    const fallbackToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.email.${Date.now()}`;
-    setAuthToken(fallbackToken);
-    return {
-      token: fallbackToken,
-      user: {
-        name: email.split('@')[0].toUpperCase(),
-        email: email,
-        phone: '+1 (555) 019-2834',
-        subscriptionActive: true
-      }
-    };
-  }
-}
-
-/**
- * Create New Subscriber Account
- * POST /api/auth/signup
+ * Register New Subscriber with Email & Password
  */
 export async function signupWithEmailApi(name, email, phone, password) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, phone, password })
-    });
-
-    if (!response.ok) {
-      throw new Error('Account registration failed.');
-    }
-
-    const data = await response.json();
-    setAuthToken(data.token);
-    return data;
-  } catch (error) {
-    console.warn('API Endpoint unreachable, utilizing client JWT session fallback:', error.message);
-    const fallbackToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.signup.${Date.now()}`;
-    setAuthToken(fallbackToken);
-    return {
-      token: fallbackToken,
-      user: {
-        name: name || 'New Subscriber',
-        email: email,
-        phone: phone || '+1 (555) 000-0000',
-        subscriptionActive: false
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: name,
+        phone: phone
       }
-    };
+    }
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Log In with Email & Password
+ */
+export async function loginWithEmailApi(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Log In with Google OAuth (Browser Redirect)
+ */
+export async function loginWithGoogleApi() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Send Password Reset Email
+ */
+export async function requestPasswordResetApi(email) {
+  const redirectTo = `${window.location.origin}/#reset-password`;
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Update User Password (Recovery Flow)
+ */
+export async function updatePasswordApi(newPassword) {
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Sign Out / Clear Session
+ */
+export async function logoutApi() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+}
+
+/**
+ * Get Current Active Auth Session
+ */
+export async function getCurrentSessionApi() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw error;
+  return data.session;
+}
+
+/**
+ * Fetch Subscriber Profile Data from DB
+ */
+export async function fetchUserProfileApi(userId) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    console.error('Error fetching user profile:', error);
   }
+  return data;
+}
+
+/**
+ * Fetch User Reminders from DB
+ */
+export async function fetchRemindersApi() {
+  const { data, error } = await supabase
+    .from('reminders')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Create New Reminder in DB
+ */
+export async function createReminderApi(userId, title, time, notes = '') {
+  const { data, error } = await supabase
+    .from('reminders')
+    .insert([
+      {
+        user_id: userId,
+        title: title.toUpperCase(),
+        time: time.toUpperCase(),
+        status: 'SCHEDULED',
+        notes
+      }
+    ])
+    .select();
+
+  if (error) throw error;
+  return data[0];
+}
+
+/**
+ * Delete Reminder from DB
+ */
+export async function deleteReminderApi(id) {
+  const { error } = await supabase
+    .from('reminders')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
+/**
+ * Update Reminder Status in DB
+ */
+export async function updateReminderStatusApi(id, newStatus) {
+  const { data, error } = await supabase
+    .from('reminders')
+    .update({ status: newStatus })
+    .eq('id', id)
+    .select();
+
+  if (error) throw error;
+  return data[0];
 }

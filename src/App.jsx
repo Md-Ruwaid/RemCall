@@ -6,6 +6,7 @@ import AboutView from './components/AboutView';
 import HowItWorksView from './components/HowItWorksView';
 import DashboardView from './components/DashboardView';
 import AuthView from './components/AuthView';
+import ResetPasswordView from './components/ResetPasswordView';
 import SubscribeModal from './components/SubscribeModal';
 import ClickSpark from './components/ClickSpark';
 
@@ -33,6 +34,13 @@ function AppShell() {
       setActiveView('auth');
     }
   }, [activeView, isAuthenticated, setActiveView]);
+
+  // Check URL hash recovery routes on load
+  useEffect(() => {
+    if (window.location.hash === '#reset-password') {
+      setActiveView('reset-password');
+    }
+  }, [setActiveView]);
 
   return (
     <ClickSpark
@@ -103,6 +111,7 @@ function AppShell() {
             {activeView === 'about' && <AboutView />}
             {activeView === 'how-it-works' && <HowItWorksView />}
             {activeView === 'auth' && <AuthView />}
+            {activeView === 'reset-password' && <ResetPasswordView />}
             {activeView === 'dashboard' && isAuthenticated && <DashboardView />}
           </main>
           <SubscribeModal />

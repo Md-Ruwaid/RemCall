@@ -1,72 +1,106 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { supabase } from '../services/supabaseClient';
 import {
-  getAuthToken,
-  setAuthToken,
-  loginWithEmailApi,
   signupWithEmailApi,
-  loginWithGoogleApi
+  loginWithEmailApi,
+  loginWithGoogleApi,
+  requestPasswordResetApi,
+  updatePasswordApi,
+  logoutApi,
+  fetchUserProfileApi,
+  fetchRemindersApi,
+  createReminderApi,
+  deleteReminderApi,
+  updateReminderStatusApi
 } from '../services/api';
 
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
-  // Navigation View: 'home' | 'about' | 'how-it-works' | 'dashboard' | 'auth'
+  // View routing state: 'home' | 'about' | 'how-it-works' | 'dashboard' | 'auth' | 'reset-password'
   const [activeView, setActiveView] = useState('home');
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('auth'); // 'auth' | 'subscribe'
 
-  // Authentication State
-  const [token, setToken] = useState(() => getAuthToken());
-  const [isAuthenticated, setIsAuthenticated] = useState(() => !!getAuthToken());
+  // Session & User State
+  const [session, setSession] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [authError, setAuthError] = useState(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [emailConfirmationPending, setEmailConfirmationPending] = useState(false);
 
-  // Current User State (Subscriber record)
-  const [user, setUser] = useState({
-    name: 'Sarah Connor',
-    email: 'sarah@example.com',
-    phone: '+1 (555) 019-2834',
-    subscriptionActive: true,
-    dailyCallLimit: 6,
-    callsUsedToday: 2,
-    planName: 'Pro Protocol',
-    subscriptionEnd: getUpcomingSundayISO(),
-    inventoryCredits: 1
-  });
+  // Reminders List from DB
+  const [reminders, setReminders] = useState([]);
 
-  // Reminders List
-  const [reminders, setReminders] = useState([
-    {
-      id: 'rem-1',
-      title: 'Q3 FINANCIAL REVIEW PREPARATION',
-      time: 'TODAY, 4:00 PM',
-      status: 'SCHEDULED', // 'SCHEDULED' | 'CALLED' | 'MISSED'
-      notes: 'Operator will verify slide deck readiness before executive meeting.'
-    },
-    {
-      id: 'rem-2',
-      title: 'CLIENT CONTRACT SIGNOFF FOLLOW-UP',
-      time: 'TODAY, 11:30 AM',
-      status: 'CALLED',
-      notes: 'Call completed successfully by Operator 04. Verified doc signed.'
-    },
-    {
-      id: 'rem-3',
-      title: 'WEEKLY METRICS & ACCOUNTABILITY CHECK-IN',
-      time: 'YESTERDAY, 5:00 PM',
-      status: 'MISSED',
-      notes: 'Subscriber line busy at scheduled 5:00 PM call slot.'
-    }
-  ]);
+  // Derived Authentication Flag
+  const isAuthenticated = !!session;
 
-  // Sync token state on startup
-  useEffect(() => {
-    const storedToken = getAuthToken();
-    if (storedToken) {
-      setToken(storedToken);
-      setIsAuthenticated(true);
+  // Merged User Object (Supabase Auth User + Profiles Table DB Row)
+  const user = {
+    id: session?.user?.id || '',
+    email: session?.user?.email || 'subscriber@example.com',
+    name: userProfile?.name || session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.name || 'Subscriber',
+    phone: userProfile?.phone || session?.user?.user_metadata?.phone || '+1 (555) 019-2834',
+    subscriptionActive: userProfile?.subscription_active ?? false,
+    dailyCallLimit: userProfile?.daily_call_limit || 1,
+    callsUsedToday: userProfile?.calls_used_today || 0,
+    planName: userProfile?.plan_name || 'Basic Protocol',
+    subscriptionEnd: userProfile?.subscription_end || getUpcomingSundayISO(),
+    inventoryCredits: userProfile?.inventory_credits || 0
+  };
+
+  // Load User Profile & Reminders from DB
+  const loadUserData = useCallback(async (userId) => {
+    try {
+      const [profileData, remindersData] = await Promise.all([
+        fetchUserProfileApi(userId),
+        fetchRemindersApi()
+      ]);
+
+      if (profileData) {
+        setUserProfile(profileData);
+      }
+      setReminders(remindersData || []);
+    } catch (err) {
+      console.error('Error loading user profile or reminders:', err);
     }
   }, []);
+
+  // Supabase Auth State Change Listener
+  useEffect(() => {
+    let mounted = true;
+
+    // 1. Fetch initial session
+    supabase.auth.getSession().then(({ data: { session: initSession } }) => {
+      if (!mounted) return;
+      setSession(initSession);
+      if (initSession?.user) {
+        loadUserData(initSession.user.id);
+      }
+      setIsAuthLoading(false);
+    });
+
+    // 2. Subscribe to auth changes (login, logout, token refresh, OAuth redirect)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      if (!mounted) return;
+      setSession(currentSession);
+
+      if (event === 'PASSWORD_RECOVERY') {
+        setActiveView('reset-password');
+      } else if (currentSession?.user) {
+        await loadUserData(currentSession.user.id);
+      } else {
+        setUserProfile(null);
+        setReminders([]);
+      }
+      setIsAuthLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [loadUserData]);
 
   // Pricing Rule Calculation: ₹149 + ₹60 × (calls - 1)
   const calculatePrice = (callsPerDay) => {
@@ -74,40 +108,67 @@ export function AppProvider({ children }) {
     return 149 + 60 * (clamped - 1);
   };
 
-  // Add Reminder
-  const addReminder = (title, time, notes = '') => {
-    const newRem = {
-      id: `rem-${Date.now()}`,
-      title: title.toUpperCase(),
-      time: time.toUpperCase(),
-      status: 'SCHEDULED',
-      notes
-    };
-    setReminders(prev => [newRem, ...prev]);
+  // Add Reminder to DB
+  const addReminder = async (title, time, notes = '') => {
+    if (!session?.user?.id) return;
+    try {
+      const newRem = await createReminderApi(session.user.id, title, time, notes);
+      setReminders(prev => [newRem, ...prev]);
+    } catch (err) {
+      console.error('Failed to create reminder:', err);
+      throw err;
+    }
   };
 
-  // Delete / Cancel Reminder
-  const deleteReminder = (id) => {
-    setReminders(prev => prev.filter(r => r.id !== id));
+  // Delete Reminder from DB
+  const deleteReminder = async (id) => {
+    try {
+      await deleteReminderApi(id);
+      setReminders(prev => prev.filter(r => r.id !== id));
+    } catch (err) {
+      console.error('Failed to delete reminder:', err);
+      throw err;
+    }
   };
 
-  // Update Reminder Status
-  const updateReminderStatus = (id, newStatus) => {
-    setReminders(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+  // Update Reminder Status in DB
+  const updateReminderStatus = async (id, newStatus) => {
+    try {
+      const updated = await updateReminderStatusApi(id, newStatus);
+      setReminders(prev => prev.map(r => r.id === id ? updated : r));
+    } catch (err) {
+      console.error('Failed to update reminder status:', err);
+      throw err;
+    }
   };
 
-  // Activate Subscription
-  const activateSubscription = (dailyLimit, phone, name) => {
-    setUser((prev) => ({
-      ...prev,
-      subscriptionActive: true,
-      dailyCallLimit: dailyLimit,
-      phone: phone || prev.phone,
-      name: name || prev.name,
-      subscriptionEnd: getUpcomingSundayISO()
-    }));
-    setIsAuthenticated(true);
-    setIsSubscribeModalOpen(false);
+  // Activate Subscription (updates local profile and backend DB profile)
+  const activateSubscription = async (dailyLimit, phone, name) => {
+    if (!session?.user?.id) return;
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({
+          subscription_active: true,
+          daily_call_limit: dailyLimit,
+          phone: phone || user.phone,
+          name: name || user.name,
+          subscription_end: getUpcomingSundayISO()
+        })
+        .eq('id', session.user.id)
+        .select()
+        .single();
+
+      if (error) console.error('Profile update warning:', error);
+      if (data) setUserProfile(data);
+
+      setIsSubscribeModalOpen(false);
+      setActiveView('dashboard');
+    } catch (err) {
+      console.error('Subscription activation failed:', err);
+      setIsSubscribeModalOpen(false);
+      setActiveView('dashboard');
+    }
   };
 
   // Login Handler (Email)
@@ -117,21 +178,14 @@ export function AppProvider({ children }) {
 
     try {
       const res = await loginWithEmailApi(email, password);
-      setToken(res.token);
-      setIsAuthenticated(true);
-      if (res.user) {
-        setUser(prev => ({
-          ...prev,
-          name: res.user.name || prev.name,
-          email: res.user.email || email,
-          phone: res.user.phone || prev.phone,
-          subscriptionActive: res.user.subscriptionActive ?? prev.subscriptionActive
-        }));
+      setSession(res.session);
+      if (res.session?.user) {
+        await loadUserData(res.session.user.id);
       }
       setIsAuthLoading(false);
       return res;
     } catch (err) {
-      setAuthError(err.message || 'Login failed.');
+      setAuthError(err.message || 'Invalid login credentials.');
       setIsAuthLoading(false);
       throw err;
     }
@@ -141,18 +195,17 @@ export function AppProvider({ children }) {
   const signupUser = async (name, email, phone, password) => {
     setIsAuthLoading(true);
     setAuthError(null);
+    setEmailConfirmationPending(false);
 
     try {
       const res = await signupWithEmailApi(name, email, phone, password);
-      setToken(res.token);
-      setIsAuthenticated(true);
-      setUser(prev => ({
-        ...prev,
-        name: name || prev.name,
-        email: email || prev.email,
-        phone: phone || prev.phone,
-        subscriptionActive: false // requires subscription checkout
-      }));
+      // If user requires email confirmation
+      if (res.user && !res.session) {
+        setEmailConfirmationPending(true);
+      } else if (res.session) {
+        setSession(res.session);
+        await loadUserData(res.session.user.id);
+      }
       setIsAuthLoading(false);
       return res;
     } catch (err) {
@@ -163,25 +216,11 @@ export function AppProvider({ children }) {
   };
 
   // Google OAuth Login Handler
-  const loginWithGoogle = async (credential) => {
+  const loginWithGoogle = async () => {
     setIsAuthLoading(true);
     setAuthError(null);
-
     try {
-      const res = await loginWithGoogleApi(credential);
-      setToken(res.token);
-      setIsAuthenticated(true);
-      if (res.user) {
-        setUser(prev => ({
-          ...prev,
-          name: res.user.name || prev.name,
-          email: res.user.email || prev.email,
-          phone: res.user.phone || prev.phone,
-          subscriptionActive: res.user.subscriptionActive ?? true
-        }));
-      }
-      setIsAuthLoading(false);
-      return res;
+      await loginWithGoogleApi();
     } catch (err) {
       setAuthError(err.message || 'Google OAuth failed.');
       setIsAuthLoading(false);
@@ -189,12 +228,40 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Logout Handler (Clears JWT & Session)
-  const logoutUser = () => {
-    setAuthToken(null);
-    setToken(null);
-    setIsAuthenticated(false);
-    setActiveView('home');
+  // Password Reset Handler
+  const requestPasswordReset = async (email) => {
+    setAuthError(null);
+    try {
+      await requestPasswordResetApi(email);
+    } catch (err) {
+      setAuthError(err.message || 'Failed to send password reset email.');
+      throw err;
+    }
+  };
+
+  // Update Password Handler
+  const updatePassword = async (newPassword) => {
+    setAuthError(null);
+    try {
+      await updatePasswordApi(newPassword);
+    } catch (err) {
+      setAuthError(err.message || 'Failed to update password.');
+      throw err;
+    }
+  };
+
+  // Logout Handler (Clears Supabase Session)
+  const logoutUser = async () => {
+    try {
+      await logoutApi();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      setSession(null);
+      setUserProfile(null);
+      setReminders([]);
+      setActiveView('home');
+    }
   };
 
   return (
@@ -207,12 +274,14 @@ export function AppProvider({ children }) {
         authModalMode,
         setAuthModalMode,
         isAuthenticated,
-        setIsAuthenticated,
-        token,
+        session,
         authError,
+        setAuthError,
         isAuthLoading,
+        emailConfirmationPending,
+        setEmailConfirmationPending,
         user,
-        setUser,
+        setUserProfile,
         reminders,
         addReminder,
         deleteReminder,
@@ -222,6 +291,8 @@ export function AppProvider({ children }) {
         loginUser,
         signupUser,
         loginWithGoogle,
+        requestPasswordReset,
+        updatePassword,
         logoutUser
       }}
     >

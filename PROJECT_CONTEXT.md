@@ -173,3 +173,21 @@ c:\Users\Md Ruwaid uddin\Downloads\New folder\
 3. **No 3D / Box Shadows:** Do NOT add drop-shadows or 3D elevation effects (`box-shadow: none` strictly enforced).
 4. **Single Viewport Landing Page:** `UnifiedMainView.jsx` must remain a non-scrollable single screen (`100vh`, `overflow: hidden` when `activeView === 'home'`).
 5. **Pricing Formula:** Must strictly use `149 + 60 * (callsPerDay - 1)` for daily call limits between 1 and 6.
+
+---
+
+## 7. Environment Variables & Supabase Setup
+
+The project requires the following environment variables in `.env` (gitignored):
+
+```env
+VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-public-key
+```
+
+### Supabase Integration Architecture:
+- `src/services/supabaseClient.js`: Exports global `supabase` client instance.
+- `auth.users`: Managed by Supabase Auth with Google OAuth and Email/Password providers.
+- `public.profiles`: Stores subscriber details (`daily_call_limit`, `subscription_active`, `phone`).
+- `public.reminders`: Stores user task reminders with Row Level Security (RLS) policies scoped to `auth.uid()`.
+
