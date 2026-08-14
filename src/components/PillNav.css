@@ -133,6 +133,16 @@
   background-color: var(--accent-cream, #F5E6C8);
 }
 
+.nav-active-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bg-dark, #0F212A);
+  margin-right: 0.4em;
+  flex-shrink: 0;
+}
+
 .desktop-only {
   display: block;
 }

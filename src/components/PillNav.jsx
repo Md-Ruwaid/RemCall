@@ -170,6 +170,7 @@ const PillNav = ({
                     }
                   }}
                 >
+                  {activeHref === item.href && <span className="nav-active-dot" />}
                   {item.label}
                 </a>
               </li>

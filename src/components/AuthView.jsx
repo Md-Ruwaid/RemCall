@@ -296,7 +296,7 @@ export default function AuthView() {
                         height: '32px',
                         background: 'var(--bg-dark)',
                         border: '1px solid var(--border-subtle)',
-                        borderRadius: '0px',
+                        borderRadius: '50%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
