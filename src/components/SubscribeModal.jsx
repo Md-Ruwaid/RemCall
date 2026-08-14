@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import CustomRadioGroup from './CustomRadio';
 
 export default function SubscribeModal() {
-  const { isSubscribeModalOpen, setIsSubscribeModalOpen, calculatePrice, activateSubscription } = useApp();
+  const {
+    isSubscribeModalOpen,
+    setIsSubscribeModalOpen,
+    authModalMode,
+    setAuthModalMode,
+    calculatePrice,
+    activateSubscription,
+    loginUser,
+    setActiveView
+  } = useApp();
 
   const [callsPerDay, setCallsPerDay] = useState(2);
   const [phone, setPhone] = useState('+1 (555) 019-2834');
   const [name, setName] = useState('Sarah Connor');
+  const [email, setEmail] = useState('sarah@example.com');
+  const [password, setPassword] = useState('••••••••');
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
@@ -19,49 +29,67 @@ export default function SubscribeModal() {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simulate Razorpay server-side order calculation & payment processing
     setTimeout(() => {
       setIsProcessing(false);
       setPaymentSuccess(true);
       setTimeout(() => {
         activateSubscription(callsPerDay, phone, name);
         setPaymentSuccess(false);
-      }, 1400);
-    }, 1200);
+        setActiveView('dashboard');
+      }, 1200);
+    }, 1000);
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setIsProcessing(true);
+
+    setTimeout(() => {
+      setIsProcessing(false);
+      loginUser(email, phone);
+      setIsSubscribeModalOpen(false);
+      setActiveView('dashboard');
+    }, 800);
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 100,
-      backgroundColor: 'rgba(10, 22, 29, 0.85)',
-      backdropFilter: 'blur(10px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1.5rem'
-    }}>
-      
-      <div className="ringly-card view-fade-enter" style={{
-        maxWidth: '540px',
-        width: '100%',
-        padding: '3rem 2.5rem',
-        position: 'relative',
-        boxShadow: 'none'
-      }}>
-
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 100,
+        backgroundColor: 'rgba(16, 33, 42, 0.88)',
+        backdropFilter: 'blur(10px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.5rem'
+      }}
+    >
+      <div
+        className="ringly-card view-fade-enter"
+        style={{
+          maxWidth: '520px',
+          width: '100%',
+          padding: '2.5rem',
+          position: 'relative',
+          background: 'var(--bg-card, #1C3644)',
+          border: '1px solid var(--border-subtle, #3A5C6E)',
+          borderRadius: '0px',
+          boxShadow: 'none'
+        }}
+      >
         {/* Close Button */}
         <button
           onClick={() => setIsSubscribeModalOpen(false)}
           style={{
             position: 'absolute',
-            top: '1.5rem',
-            right: '1.5rem',
+            top: '1.25rem',
+            right: '1.25rem',
             background: 'none',
             border: 'none',
             color: 'var(--text-muted)',
-            fontSize: '1.5rem',
+            fontSize: '1.4rem',
             cursor: 'pointer',
             lineHeight: 1
           }}
@@ -69,24 +97,184 @@ export default function SubscribeModal() {
           ✕
         </button>
 
-        {!paymentSuccess ? (
+        {/* Header Mode Switcher */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
+          <button
+            type="button"
+            onClick={() => setAuthModalMode('auth')}
+            className="font-mono"
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: authModalMode === 'auth' ? 'var(--accent-cream)' : 'var(--text-muted)',
+              cursor: 'pointer',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              borderBottom: authModalMode === 'auth' ? '2px solid var(--accent-cream)' : 'none',
+              paddingBottom: '0.25rem'
+            }}
+          >
+            [ LOG IN / AUTH ]
+          </button>
+          <button
+            type="button"
+            onClick={() => setAuthModalMode('subscribe')}
+            className="font-mono"
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: authModalMode === 'subscribe' ? 'var(--accent-cream)' : 'var(--text-muted)',
+              cursor: 'pointer',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              borderBottom: authModalMode === 'subscribe' ? '2px solid var(--accent-cream)' : 'none',
+              paddingBottom: '0.25rem'
+            }}
+          >
+            [ SUBSCRIBE / PLAN ]
+          </button>
+        </div>
+
+        {/* AUTHENTICATION FORM MODE */}
+        {authModalMode === 'auth' && (
           <div>
-            <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-display)', color: 'var(--accent-cream)', fontWeight: 700, letterSpacing: '0.1em' }}>
-              [ CHECKOUT & SUBSCRIPTION ]
+            <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.08em' }}>
+              [ USER AUTHENTICATION PROTOCOL ]
             </div>
 
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, textTransform: 'uppercase', marginTop: '0.2rem', marginBottom: '1.5rem' }}>
-              START RINGLY SERVICE
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-white)', marginTop: '0.25rem', marginBottom: '1.5rem' }}>
+              ACCESS RINGLY DASHBOARD
             </h2>
 
-            <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Social OAuth Options */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.75rem', textTransform: 'uppercase' }}>
+                QUICK LOG IN WITH:
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                {/* Google */}
+                <button
+                  type="button"
+                  onClick={handleLogin}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem',
+                    background: 'var(--bg-dark)',
+                    border: '1px solid var(--border-subtle)',
+                    color: 'var(--text-white)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 15.907 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+                  </svg>
+                  GOOGLE
+                </button>
+                {/* Apple */}
+                <button
+                  type="button"
+                  onClick={handleLogin}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem',
+                    background: 'var(--bg-dark)',
+                    border: '1px solid var(--border-subtle)',
+                    color: 'var(--text-white)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.34c.64-.78 1.08-1.85.96-2.94-0.93.04-2.06.62-2.73 1.4-.6.69-1.12 1.79-.98 2.86 1.04.08 2.11-.54 2.75-1.32z"/>
+                  </svg>
+                  APPLE
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+              <span className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>OR EMAIL LOGIN</span>
+              <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+            </div>
+
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div>
+                <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                  SUBSCRIBER EMAIL
+                </label>
+                <input
+                  type="email"
+                  className="ringly-input"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                  PASSWORD / ACCESS CODE
+                </label>
+                <input
+                  type="password"
+                  className="ringly-input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={isProcessing}
+                style={{ width: '100%', padding: '1rem', fontSize: '0.95rem', marginTop: '0.5rem' }}
+              >
+                {isProcessing ? 'AUTHENTICATING ACCOUNT...' : 'AUTHENTICATE & ENTER DASHBOARD'}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* SUBSCRIBE CHECKOUT MODE */}
+        {authModalMode === 'subscribe' && !paymentSuccess && (
+          <div>
+            <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.08em' }}>
+              [ CHECKOUT & SUBSCRIPTION PROTOCOL ]
+            </div>
+
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-white)', marginTop: '0.25rem', marginBottom: '1.5rem' }}>
+              START RINGLY HUMAN CALLS
+            </h2>
+
+            <form onSubmit={handleCheckout} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               
               {/* Daily Call Selector */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
                   DAILY CALL ALLOWANCE (1–6 CALLS/DAY)
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0.4rem' }}>
                   {[1, 2, 3, 4, 5, 6].map((num) => (
                     <button
                       key={num}
@@ -97,10 +285,10 @@ export default function SubscribeModal() {
                         color: callsPerDay === num ? 'var(--bg-dark)' : 'var(--text-white)',
                         border: `1px solid ${callsPerDay === num ? 'var(--accent-cream)' : 'var(--border-subtle)'}`,
                         borderRadius: '0px',
-                        padding: '0.75rem 0',
+                        padding: '0.65rem 0',
                         fontFamily: 'var(--font-display)',
                         fontWeight: 800,
-                        fontSize: '1.1rem',
+                        fontSize: '1.05rem',
                         cursor: 'pointer'
                       }}
                     >
@@ -113,7 +301,7 @@ export default function SubscribeModal() {
               {/* Price Calculation Display */}
               <div style={{
                 background: 'var(--bg-dark)',
-                padding: '1.25rem',
+                padding: '1.1rem',
                 borderRadius: '0px',
                 border: '1px solid var(--border-subtle)',
                 display: 'flex',
@@ -121,21 +309,21 @@ export default function SubscribeModal() {
                 justifyContent: 'space-between'
               }}>
                 <div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                    FORMULA: ₹149 + ₹60 × ({callsPerDay} − 1)
+                  <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                    RATE: ₹149 + ₹60 × ({callsPerDay} − 1)
                   </div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-white)', fontWeight: 600 }}>
                     Weekly Billing Rate
                   </div>
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-cream)' }}>
-                  ₹{weeklyCost}<span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/wk</span>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, color: 'var(--accent-cream)' }}>
+                  ₹{weeklyCost}<span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>/wk</span>
                 </div>
               </div>
 
               {/* Phone Input (Mandatory) */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
                   OPERATIONAL PHONE NUMBER (FOR HUMAN CALLS)
                 </label>
                 <input
@@ -150,7 +338,7 @@ export default function SubscribeModal() {
 
               {/* Name Input */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
                   SUBSCRIBER FULL NAME
                 </label>
                 <input
@@ -168,31 +356,28 @@ export default function SubscribeModal() {
                 type="submit"
                 className="btn-primary"
                 disabled={isProcessing}
-                style={{ width: '100%', padding: '1.1rem', fontSize: '1rem', marginTop: '0.5rem' }}
+                style={{ width: '100%', padding: '1rem', fontSize: '0.95rem', marginTop: '0.5rem' }}
               >
-                {isProcessing ? 'PROCESSING RAZORPAY ORDER...' : `PAY ₹${weeklyCost} & ACTIVATE SERVICE`}
+                {isProcessing ? 'PROCESSING ORDER...' : `PAY ₹${weeklyCost} & ACTIVATE SERVICE`}
               </button>
-
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-subtle)', textAlign: 'center' }}>
-                🔒 Secure 256-bit encrypted checkout via Razorpay API. Auto-renews every Sunday.
-              </div>
-
             </form>
           </div>
-        ) : (
+        )}
+
+        {/* SUCCESS CONFIRMATION STATE */}
+        {paymentSuccess && (
           <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎉</div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-cream)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎉</div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 800, color: 'var(--accent-cream)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
               SUBSCRIPTION ACTIVATED!
             </h2>
-            <p style={{ color: 'var(--text-white)', fontSize: '1.05rem', marginBottom: '1rem' }}>
-              Welcome to Ringly, {name}. Your phone ({phone}) is now verified for daily human calls!
+            <p className="font-mono" style={{ color: 'var(--text-white)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+              WELCOME TO RINGLY, {name.toUpperCase()}. REDIRECTING TO DASHBOARD...
             </p>
           </div>
         )}
 
       </div>
-
     </div>
   );
 }

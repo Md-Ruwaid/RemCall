@@ -4,6 +4,7 @@ import PillNav from './components/PillNav';
 import UnifiedMainView from './components/UnifiedMainView';
 import AboutView from './components/AboutView';
 import HowItWorksView from './components/HowItWorksView';
+import DashboardView from './components/DashboardView';
 import SubscribeModal from './components/SubscribeModal';
 import ClickSpark from './components/ClickSpark';
 
@@ -12,7 +13,8 @@ function AppShell() {
 
   const navItems = [
     { label: 'Home', href: '#home', onClick: () => setActiveView('home') },
-    { label: 'About Us', href: '#about', onClick: () => setActiveView('about') }
+    { label: 'About Us', href: '#about', onClick: () => setActiveView('about') },
+    { label: 'Dashboard', href: '#dashboard', onClick: () => setActiveView('dashboard') }
   ];
 
   return (
@@ -56,7 +58,7 @@ function AppShell() {
           </div>
         </div>
 
-        {/* React Bits PillNav Component (Home & About Us) */}
+        {/* React Bits PillNav Component (Home, About Us, Dashboard) */}
         <PillNav
           logoAlt="Ringly Logo"
           items={navItems}
@@ -83,6 +85,7 @@ function AppShell() {
             {activeView === 'home' && <UnifiedMainView />}
             {activeView === 'about' && <AboutView />}
             {activeView === 'how-it-works' && <HowItWorksView />}
+            {activeView === 'dashboard' && <DashboardView />}
           </main>
           <SubscribeModal />
         </div>
