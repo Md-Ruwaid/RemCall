@@ -56,8 +56,8 @@ export default function UnifiedMainView() {
               marginBottom: '2.25rem',
               maxWidth: '540px'
             }}>
-              Never Miss an Event<br />
-              Never Procrastinate
+              You schedule the moment.<br />
+              We make the call.
             </p>
 
             {/* Single Spotlight "FIX IT" Button */}
