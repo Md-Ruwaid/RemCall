@@ -1,21 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import PillNav from './components/PillNav';
 import UnifiedMainView from './components/UnifiedMainView';
 import AboutView from './components/AboutView';
 import HowItWorksView from './components/HowItWorksView';
 import DashboardView from './components/DashboardView';
+import AuthView from './components/AuthView';
 import SubscribeModal from './components/SubscribeModal';
 import ClickSpark from './components/ClickSpark';
 
 function AppShell() {
-  const { activeView, setActiveView } = useApp();
+  const { activeView, setActiveView, isAuthenticated } = useApp();
+
+  const handleNavClick = (view) => {
+    if (view === 'dashboard' && !isAuthenticated) {
+      setActiveView('auth');
+    } else {
+      setActiveView(view);
+    }
+  };
 
   const navItems = [
-    { label: 'Home', href: '#home', onClick: () => setActiveView('home') },
-    { label: 'About Us', href: '#about', onClick: () => setActiveView('about') },
-    { label: 'Dashboard', href: '#dashboard', onClick: () => setActiveView('dashboard') }
+    { label: 'Home', href: '#home', onClick: () => handleNavClick('home') },
+    { label: 'About Us', href: '#about', onClick: () => handleNavClick('about') },
+    { label: 'Dashboard', href: '#dashboard', onClick: () => handleNavClick('dashboard') },
+    { label: isAuthenticated ? 'Account' : 'Log In / Sign Up', href: '#auth', onClick: () => handleNavClick('auth') }
   ];
+
+  // Route Guard: redirect unauthenticated users away from /dashboard
+  useEffect(() => {
+    if (activeView === 'dashboard' && !isAuthenticated) {
+      setActiveView('auth');
+    }
+  }, [activeView, isAuthenticated, setActiveView]);
 
   return (
     <ClickSpark
@@ -37,7 +54,7 @@ function AppShell() {
 
         {/* Top Logo — fixed top-left */}
         <div
-          onClick={() => setActiveView('home')}
+          onClick={() => handleNavClick('home')}
           style={{
             position: 'fixed',
             top: '1.5rem',
@@ -58,7 +75,7 @@ function AppShell() {
           </div>
         </div>
 
-        {/* React Bits PillNav Component (Home, About Us, Dashboard) */}
+        {/* React Bits PillNav Component (Home, About Us, Dashboard, Auth) */}
         <PillNav
           logoAlt="Ringly Logo"
           items={navItems}
@@ -85,7 +102,8 @@ function AppShell() {
             {activeView === 'home' && <UnifiedMainView />}
             {activeView === 'about' && <AboutView />}
             {activeView === 'how-it-works' && <HowItWorksView />}
-            {activeView === 'dashboard' && <DashboardView />}
+            {activeView === 'auth' && <AuthView />}
+            {activeView === 'dashboard' && isAuthenticated && <DashboardView />}
           </main>
           <SubscribeModal />
         </div>
