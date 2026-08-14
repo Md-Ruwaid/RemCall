@@ -122,7 +122,7 @@
 }
 
 .pill:hover {
-  color: var(--bg-dark, #0F212A);
+  color: var(--hover-text, var(--bg-dark, #10212A));
   border-color: var(--accent-cream, #F5E6C8);
   z-index: 1;
 }

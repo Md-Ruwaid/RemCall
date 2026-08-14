@@ -5,7 +5,7 @@ import GradientRevealText from './GradientRevealText';
 import SpotlightButton from './SpotlightButton';
 
 export default function UnifiedMainView() {
-  const { setIsSubscribeModalOpen } = useApp();
+  const { setActiveView } = useApp();
 
   return (
     <div
@@ -64,7 +64,7 @@ export default function UnifiedMainView() {
             <div>
               <SpotlightButton
                 text="FIX IT"
-                onClick={() => setIsSubscribeModalOpen(true)}
+                onClick={() => setActiveView('how-it-works')}
               />
             </div>
           </div>

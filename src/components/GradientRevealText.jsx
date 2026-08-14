@@ -2,6 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import './GradientRevealText.css';
 
+// Colors pulled directly from WriglyClock.jsx PALETTE
+const AMBER_COLOR = '#FD6B00'; // PALETTE.orange (Busywork Amber)
+const IVORY_COLOR = '#F5E6C8'; // PALETTE.hand / PALETTE.numbers (Warm Pale Cream)
+const START_COLOR = 'rgba(245, 230, 200, 0.25)'; // Muted initial state
+
 export default function GradientRevealText({
   lines = ["WE CALL.", "YOU REMEMBER."],
   className = "",
@@ -13,64 +18,83 @@ export default function GradientRevealText({
     const container = containerRef.current;
     if (!container) return;
 
-    const items = container.querySelectorAll('.reveal-text-line');
+    const charElements = Array.from(container.querySelectorAll('.amber-sweep-char'));
+    if (charElements.length === 0) return;
 
-    gsap.set(items, {
-      '--stop-hover': '0%',
-      '--stop-active': '0%'
-    });
+    // Set initial color state
+    gsap.set(charElements, { color: START_COLOR });
 
-    // Intro animation: reveals text active state left-to-right
-    const tl = gsap.timeline({ defaults: { duration: 0.6, ease: 'power2.out' } });
+    const totalChars = charElements.length;
+    const sweepDuration = 1.1; // Total sweep time across headline in seconds
+    const tl = gsap.timeline({ delay: 0.15 });
 
-    tl.to(items, {
-      '--stop-active': '100%',
-      stagger: 0.15
-    });
+    charElements.forEach((charEl, idx) => {
+      const isSpace = charEl.dataset.char === ' ';
+      if (isSpace) return;
 
-    const handlers = [];
+      const isRememberChar = charEl.dataset.word === 'REMEMBER';
+      // Calculate stagger start time across 1.1s total sweep
+      const startTime = (idx / totalChars) * sweepDuration;
 
-    items.forEach((item) => {
-      const onEnter = () => {
-        gsap.to(item, {
-          '--stop-hover': '100%',
-          duration: 0.36,
-          ease: 'power2.out'
-        });
-      };
+      // 1. Ignite to Amber (#FD6B00)
+      tl.to(charEl, {
+        color: AMBER_COLOR,
+        duration: 0.06,
+        ease: 'power1.in'
+      }, startTime);
 
-      const onLeave = () => {
-        gsap.to(item, {
-          '--stop-hover': '0%',
-          duration: 0.36,
-          ease: 'power2.out'
-        });
-      };
-
-      item.addEventListener('mouseenter', onEnter);
-      item.addEventListener('mouseleave', onLeave);
-
-      handlers.push({ item, onEnter, onLeave });
+      // 2. Cool to Ivory (#F5E6C8), holding amber longer for "REMEMBER"
+      const holdTime = isRememberChar ? 0.38 : 0.08;
+      tl.to(charEl, {
+        color: IVORY_COLOR,
+        duration: 0.35,
+        ease: 'power2.out'
+      }, startTime + 0.06 + holdTime);
     });
 
     return () => {
-      handlers.forEach(({ item, onEnter, onLeave }) => {
-        item.removeEventListener('mouseenter', onEnter);
-        item.removeEventListener('mouseleave', onLeave);
-      });
       tl.kill();
     };
   }, [lines]);
 
   return (
-    <div ref={containerRef} className={`reveal-text-container ${className}`} style={style}>
-      <ul className="reveal-text-list">
-        {lines.map((line, i) => (
-          <li key={i} className="reveal-text-line">
-            {line}
-          </li>
-        ))}
-      </ul>
+    <div ref={containerRef} className={`amber-sweep-container ${className}`} style={style}>
+      <div className="amber-sweep-list">
+        {lines.map((line, lineIdx) => {
+          // Split line into words to identify 'REMEMBER'
+          const words = line.split(' ');
+          let charOffset = 0;
+
+          return (
+            <div key={lineIdx} className="amber-sweep-line">
+              {words.map((word, wordIdx) => {
+                const chars = word.split('');
+                const wordKey = `${lineIdx}-${wordIdx}`;
+
+                return (
+                  <React.Fragment key={wordKey}>
+                    {chars.map((ch, chIdx) => (
+                      <span
+                        key={`${wordKey}-${chIdx}`}
+                        className="amber-sweep-char"
+                        data-char={ch}
+                        data-word={word}
+                      >
+                        {ch}
+                      </span>
+                    ))}
+                    {wordIdx < words.length - 1 && (
+                      <span className="amber-sweep-char" data-char=" ">
+                        {'\u00A0'}
+                      </span>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
