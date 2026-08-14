@@ -18,7 +18,7 @@ const ScrollStack = ({
   scaleDuration = 0.5,
   rotationAmount = 0,
   blurAmount = 4,
-  useWindowScroll = false,
+  useWindowScroll = true,
   onStackComplete
 }) => {
   const scrollerRef = useRef(null);
@@ -142,7 +142,7 @@ const ScrollStack = ({
         translateY = pinEnd - cardTop + stackPositionPx + itemStackDistance * i;
       }
 
-      // Smooth 60fps continuous transform using fixed static baseline cardTop
+      // Smooth 60fps continuous transform using window scroll
       card.style.transform = `translate3d(0px, ${translateY}px, 0px) scale(${scale}) rotate(${rotation}deg)`;
       card.style.filter = blur > 0.1 ? `blur(${blur}px)` : 'none';
       card.style.opacity = opacity;
