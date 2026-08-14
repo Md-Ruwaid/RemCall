@@ -655,3 +655,132 @@ html, body {
     font-size: 0.85rem;
   }
 }
+
+/* From Uiverse.io by D3OXY — Ringly Auth styling */
+.form {
+  --background: #162C37;
+  --input-focus: #F5E6C8;
+  --font-color: #FFFFFF;
+  --font-color-sub: #8EA8B6;
+  --bg-color: #10212A;
+  --main-color: #F5E6C8;
+  padding: 24px;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+  width: 100%;
+}
+
+.form > p {
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  color: var(--font-color);
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form > p > span {
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  color: var(--font-color-sub);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.separator {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.separator > div {
+  flex: 1;
+  height: 2px;
+  border-radius: 5px;
+  background-color: var(--font-color-sub);
+}
+
+.separator > span {
+  color: var(--font-color-sub);
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.oauthButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0 15px;
+  width: 100%;
+  height: 44px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  color: var(--font-color);
+  cursor: pointer;
+  transition: all 250ms;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.oauthButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: var(--main-color);
+  z-index: -1;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+}
+
+.oauthButton:hover {
+  color: var(--bg-color);
+}
+
+.oauthButton:hover::before {
+  width: 100%;
+}
+
+.form input {
+  width: 100%;
+  height: 44px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+  padding: 5px 12px;
+  outline: none;
+}
+
+.form input:focus {
+  border-color: var(--input-focus);
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+

@@ -344,20 +344,10 @@ export default function AuthView() {
           </div>
 
           {/* RIGHT PANEL: Authentication Form (Sign Up / Log In / Reset) */}
-          <div
-            style={{
-              background: 'var(--bg-card, #1C3644)',
-              border: '1px solid var(--border-subtle, #3A5C6E)',
-              borderRadius: '0px',
-              padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center'
-            }}
-          >
+          <div className="form">
             {/* EMAIL CONFIRMATION REQUIRED STATE */}
             {emailConfirmationPending ? (
-              <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+              <div style={{ textAlign: 'center', padding: '1rem 0', width: '100%' }}>
                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✉️</div>
                 <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--accent-cream)', marginBottom: '0.75rem' }}>
                   CONFIRM YOUR EMAIL
@@ -368,7 +358,7 @@ export default function AuthView() {
                 <button
                   type="button"
                   onClick={() => setEmailConfirmationPending(false)}
-                  className="ringly-auth-btn"
+                  className="oauthButton"
                   style={{ width: '100%' }}
                 >
                   <span>RETURN TO LOG IN →</span>
@@ -382,10 +372,12 @@ export default function AuthView() {
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
                     gap: '0.5rem',
-                    marginBottom: '1.75rem',
+                    width: '100%',
+                    marginBottom: '0.5rem',
                     background: 'var(--bg-dark)',
                     padding: '0.3rem',
-                    border: '1px solid var(--border-subtle)'
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '4px'
                   }}
                 >
                   <button
@@ -400,7 +392,8 @@ export default function AuthView() {
                       fontSize: '0.8rem',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      letterSpacing: '0.08em'
+                      letterSpacing: '0.08em',
+                      borderRadius: '3px'
                     }}
                   >
                     SIGN UP
@@ -418,35 +411,32 @@ export default function AuthView() {
                       fontSize: '0.8rem',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      letterSpacing: '0.08em'
+                      letterSpacing: '0.08em',
+                      borderRadius: '3px'
                     }}
                   >
                     LOG IN
                   </button>
                 </div>
 
-                {/* Header Title */}
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.08em' }}>
-                    [ {authMode === 'signup' ? 'CREATE SUBSCRIBER ACCOUNT' : authMode === 'login' ? 'WELCOME BACK' : 'PASSWORD RECOVERY'} ]
-                  </div>
-                  <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-white)', marginTop: '0.2rem' }}>
-                    {authMode === 'signup' ? 'START YOUR PROTOCOL' : authMode === 'login' ? 'AUTHENTICATE ACCESS' : 'RESET PASSWORD'}
-                  </h2>
-                </div>
+                {/* D3OXY Styled Header Title */}
+                <p>
+                  {authMode === 'signup' ? 'START YOUR PROTOCOL' : authMode === 'login' ? 'AUTHENTICATE ACCESS' : 'RESET PASSWORD'}
+                  <span>[ {authMode === 'signup' ? 'CREATE SUBSCRIBER ACCOUNT' : authMode === 'login' ? 'WELCOME BACK' : 'PASSWORD RECOVERY'} ]</span>
+                </p>
 
                 {/* Error Display Alert */}
                 {(localError || authError) && (
                   <div
                     className="font-mono"
                     style={{
+                      width: '100%',
                       background: 'rgba(231, 76, 60, 0.15)',
-                      border: '1px solid #E74C3C',
+                      border: '1.5px solid #E74C3C',
                       borderRadius: '4px',
                       color: '#E74C3C',
                       padding: '0.75rem 1rem',
-                      fontSize: '0.78rem',
-                      marginBottom: '1.25rem'
+                      fontSize: '0.78rem'
                     }}
                   >
                     ⚠️ {localError || authError}
@@ -458,68 +448,52 @@ export default function AuthView() {
                   <div
                     className="font-mono"
                     style={{
+                      width: '100%',
                       background: 'rgba(245, 230, 200, 0.15)',
-                      border: '1px solid var(--accent-cream)',
+                      border: '1.5px solid var(--accent-cream)',
                       borderRadius: '4px',
                       color: 'var(--accent-cream)',
                       padding: '0.75rem 1rem',
-                      fontSize: '0.78rem',
-                      marginBottom: '1.25rem'
+                      fontSize: '0.78rem'
                     }}
                   >
                     ✓ Password reset instructions sent to {email}. Check your inbox.
                   </div>
                 )}
 
-                {/* Google OAuth Button */}
+                {/* Google OAuth Button with D3OXY hover & shadow */}
                 {authMode !== 'forgot' && (
                   <>
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <button
-                        type="button"
-                        onClick={handleGoogleAuth}
-                        disabled={isAuthLoading}
-                        style={{
-                          width: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '0.6rem',
-                          padding: '0.85rem',
-                          background: 'var(--bg-dark)',
-                          border: '1px solid var(--border-subtle)',
-                          color: 'var(--text-white)',
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: '0.8rem',
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 15.907 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
-                        </svg>
-                        SIGN IN WITH GOOGLE
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={handleGoogleAuth}
+                      disabled={isAuthLoading}
+                      className="oauthButton"
+                    >
+                      <svg className="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 15.907 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+                      </svg>
+                      SIGN IN WITH GOOGLE
+                    </button>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-                      <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
-                      <span className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>OR WORK EMAIL</span>
-                      <div style={{ flex: 1, height: '1px', background: 'var(--border-subtle)' }} />
+                    {/* D3OXY Separator */}
+                    <div className="separator">
+                      <div />
+                      <span>OR WORK EMAIL</span>
+                      <div />
                     </div>
                   </>
                 )}
 
-                {/* Email / Password Form */}
-                <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {/* Email / Password Form with D3OXY Input styling */}
+                <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
                   {authMode === 'signup' && (
                     <div>
-                      <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                      <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--font-color-sub)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
                         FULL NAME
                       </label>
                       <input
                         type="text"
-                        className="ringly-input"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="Sarah Connor"
@@ -529,12 +503,11 @@ export default function AuthView() {
                   )}
 
                   <div>
-                    <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                    <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--font-color-sub)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
                       WORK EMAIL ADDRESS
                     </label>
                     <input
                       type="email"
-                      className="ringly-input"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@company.com"
@@ -544,12 +517,11 @@ export default function AuthView() {
 
                   {authMode === 'signup' && (
                     <div>
-                      <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                      <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--font-color-sub)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
                         PHONE NUMBER (FOR HUMAN CALLS)
                       </label>
                       <input
                         type="tel"
-                        className="ringly-input"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+1 (555) 000-0000"
@@ -561,7 +533,7 @@ export default function AuthView() {
                   {authMode !== 'forgot' && (
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <label className="font-mono" style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                        <label className="font-mono" style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--font-color-sub)', textTransform: 'uppercase' }}>
                           PASSWORD
                         </label>
                         {authMode === 'login' && (
@@ -577,7 +549,6 @@ export default function AuthView() {
                       </div>
                       <input
                         type="password"
-                        className="ringly-input"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
@@ -586,21 +557,12 @@ export default function AuthView() {
                     </div>
                   )}
 
-                  {/* Sign In Button */}
+                  {/* Submit Button styled as D3OXY oauthButton */}
                   <button
                     type="submit"
                     disabled={isAuthLoading}
-                    className="ringly-auth-btn"
-                    style={{
-                      marginTop: '0.5rem',
-                      padding: '1rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.9rem',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                      cursor: 'pointer'
-                    }}
+                    className="oauthButton"
+                    style={{ marginTop: '0.5rem' }}
                   >
                     <span>
                       {isAuthLoading
@@ -618,7 +580,7 @@ export default function AuthView() {
                       type="button"
                       onClick={() => setAuthMode('login')}
                       className="font-mono"
-                      style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer', marginTop: '0.5rem' }}
+                      style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.75rem', cursor: 'pointer', marginTop: '0.5rem', alignSelf: 'center' }}
                     >
                       ← BACK TO LOG IN
                     </button>
