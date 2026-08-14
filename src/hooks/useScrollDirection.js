@@ -5,25 +5,26 @@ export function useScrollDirection() {
   const [isAtTop, setIsAtTop] = useState(true);
 
   useEffect(() => {
-    let lastScrollY = window.pageYOffset;
+    let lastScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
 
     const updateScrollDirection = () => {
-      const scrollY = window.pageYOffset;
-      const direction = scrollY > lastScrollY ? 'down' : 'up';
+      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
       
       setIsAtTop(scrollY < 10);
 
-      if (direction !== scrollDirection && (scrollY - lastScrollY > 5 || scrollY - lastScrollY < -5)) {
+      const diff = scrollY - lastScrollY;
+      if (Math.abs(diff) > 5) {
+        const direction = diff > 0 ? 'down' : 'up';
         setScrollDirection(direction);
+        lastScrollY = scrollY > 0 ? scrollY : 0;
       }
-      lastScrollY = scrollY > 0 ? scrollY : 0;
     };
 
     window.addEventListener('scroll', updateScrollDirection, { passive: true });
     return () => {
       window.removeEventListener('scroll', updateScrollDirection);
     };
-  }, [scrollDirection]);
+  }, []);
 
   return { scrollDirection, isAtTop };
 }

@@ -120,12 +120,12 @@ function AppShell() {
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          height: activeView === 'home' ? '100vh' : 'auto',
+          height: isHomeLocked ? '100vh' : 'auto',
           minHeight: '100vh',
           width: '100%',
-          overflow: activeView === 'home' ? 'hidden' : 'visible'
+          overflow: isHomeLocked ? 'hidden' : 'visible'
         }}>
-          <main style={{ flex: 1, position: 'relative', zIndex: 1, overflow: activeView === 'home' ? 'hidden' : 'visible' }}>
+          <main style={{ flex: 1, position: 'relative', zIndex: 1, overflow: isHomeLocked ? 'hidden' : 'visible' }}>
             {activeView === 'home' && <UnifiedMainView />}
             {activeView === 'about' && <AboutView />}
             {activeView === 'how-it-works' && <HowItWorksView />}

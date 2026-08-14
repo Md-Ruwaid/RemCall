@@ -27,22 +27,35 @@ export const StickyScroll = ({
   // Direct scroll detection: pick the card whose center is closest to the container's center
   useEffect(() => {
     const scroller = scrollerRef.current;
-    if (!scroller) return;
 
     const onScroll = () => {
-      const scrollCenter = scroller.scrollTop + scroller.clientHeight / 2;
       let closestIndex = 0;
       let closestDist = Infinity;
 
-      itemRefs.current.forEach((el, index) => {
-        if (!el) return;
-        const itemCenter = el.offsetTop + el.offsetHeight / 2;
-        const dist = Math.abs(scrollCenter - itemCenter);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closestIndex = index;
-        }
-      });
+      if (isMobile) {
+        const viewportCenter = window.innerHeight / 2;
+        itemRefs.current.forEach((el, index) => {
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          const itemCenter = rect.top + rect.height / 2;
+          const dist = Math.abs(viewportCenter - itemCenter);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIndex = index;
+          }
+        });
+      } else if (scroller) {
+        const scrollCenter = scroller.scrollTop + scroller.clientHeight / 2;
+        itemRefs.current.forEach((el, index) => {
+          if (!el) return;
+          const itemCenter = el.offsetTop + el.offsetHeight / 2;
+          const dist = Math.abs(scrollCenter - itemCenter);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIndex = index;
+          }
+        });
+      }
 
       if (closestIndex !== prevCard.current) {
         const newDir = closestIndex > prevCard.current ? 1 : -1;
@@ -53,12 +66,17 @@ export const StickyScroll = ({
       }
     };
 
-    scroller.addEventListener('scroll', onScroll, { passive: true });
-    // Run once on mount to set initial active card
+    if (scroller) {
+      scroller.addEventListener('scroll', onScroll, { passive: true });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    return () => scroller.removeEventListener('scroll', onScroll);
-  }, [onActiveCardChange]);
+    return () => {
+      if (scroller) scroller.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [onActiveCardChange, isMobile]);
 
 
   // Spring config — tight, zero wobble

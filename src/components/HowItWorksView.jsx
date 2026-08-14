@@ -75,8 +75,9 @@ export default function HowItWorksView() {
       }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
-        height: '100vh',
-        overflow: 'hidden',
+        height: isMobile ? 'auto' : '100vh',
+        minHeight: '100vh',
+        overflow: isMobile ? 'visible' : 'hidden',
         color: 'var(--text-white)',
         display: 'flex',
         flexDirection: 'column',
