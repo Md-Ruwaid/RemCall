@@ -35,9 +35,9 @@
   display: flex;
   align-items: center;
   height: var(--nav-h);
-  background: var(--base, #F5E6C8);
+  background: transparent;
   border-radius: 0px;
-  padding: 3px;
+  padding: 0;
   box-shadow: none;
 }
 
@@ -45,7 +45,7 @@
   width: var(--nav-h);
   height: var(--nav-h);
   border-radius: 0px;
-  background: var(--base, #F5E6C8);
+  background: transparent;
   padding: 6px;
   display: inline-flex;
   align-items: center;
@@ -66,8 +66,8 @@
 .pill-list {
   list-style: none;
   display: flex;
-  align-items: stretch;
-  gap: var(--pill-gap);
+  align-items: center;
+  gap: 1rem;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -83,9 +83,9 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 0 var(--pill-pad-x);
-  background: var(--pill-bg, #162C37);
-  color: var(--pill-text, #F5E6C8);
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--text-white, #FFFFFF);
   text-decoration: none;
   border-radius: 0px;
   box-sizing: border-box;
@@ -98,7 +98,7 @@
   white-space: nowrap;
   cursor: pointer;
   position: relative;
-  border: 1px solid var(--accent-cream, #F5E6C8);
+  border: none;
   outline: none;
   transition: 0.4s;
   z-index: 1;
@@ -116,9 +116,7 @@
 }
 
 .pill:hover {
-  color: var(--accent-cream, #F5E6C8);
-  border-color: var(--accent-cream, #F5E6C8);
-  z-index: 1;
+  color: #A6A6A6;
 }
 
 .pill:hover::before {
@@ -126,8 +124,13 @@
 }
 
 .pill.is-active {
-  background: var(--accent-cream, #F5E6C8);
-  color: var(--bg-dark, #0F212A);
+  background: transparent;
+  color: var(--accent-cream, #F5E6C8);
+}
+
+.pill.is-active::before {
+  width: 100%;
+  background-color: var(--accent-cream, #F5E6C8);
 }
 
 .desktop-only {
