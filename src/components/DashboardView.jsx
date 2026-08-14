@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function DashboardView() {
-  const { user, reminders, addReminder, deleteReminder, updateReminderStatus } = useApp();
+  const { user, reminders, addReminder, deleteReminder, updateReminderStatus, logoutUser } = useApp();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newTime, setNewTime] = useState('');
   const [newNotes, setNewNotes] = useState('');
-
-  const [editingId, setEditingId] = useState(null);
 
   const handleAddSubmit = (e) => {
     e.preventDefault();
@@ -63,8 +61,27 @@ export default function DashboardView() {
             </div>
           </div>
 
-          <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            SUBSCRIBER: {user.phone}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              SUBSCRIBER: {user.phone}
+            </div>
+
+            <button
+              onClick={logoutUser}
+              style={{
+                background: 'var(--bg-dark)',
+                border: '1px solid var(--border-subtle)',
+                color: '#E74C3C',
+                padding: '0.35rem 0.75rem',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                borderRadius: '0px'
+              }}
+            >
+              LOG OUT ↵
+            </button>
           </div>
         </div>
 

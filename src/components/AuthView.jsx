@@ -33,6 +33,10 @@ const PLACEHOLDER_TESTIMONIALS = [
 export default function AuthView() {
   const {
     loginUser,
+    signupUser,
+    loginWithGoogle,
+    authError,
+    isAuthLoading,
     user,
     setIsSubscribeModalOpen,
     setAuthModalMode,
@@ -45,7 +49,7 @@ export default function AuthView() {
   const [phone, setPhone] = useState('');
   const [fullName, setFullName] = useState('');
   const [activeQuoteIndex, setActiveQuoteIndex] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [localError, setLocalError] = useState(null);
 
   // Rotating quote interval (every 5.5 seconds, restrained motion)
   useEffect(() => {
@@ -55,23 +59,51 @@ export default function AuthView() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleAuthSubmit = (e) => {
+  const handleAuthSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setLocalError(null);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      loginUser(email || 'subscriber@ringly.com', phone || '+1 (555) 019-2834');
-      
-      // Post-auth routing logic:
-      if (user.subscriptionActive) {
+    try {
+      if (authMode === 'signup') {
+        const res = await signupUser(fullName, email, phone, password);
+        // Post-auth routing logic:
+        if (res.user && res.user.subscriptionActive) {
+          setActiveView('dashboard');
+        } else {
+          setAuthModalMode('subscribe');
+          setIsSubscribeModalOpen(true);
+          setActiveView('dashboard');
+        }
+      } else {
+        const res = await loginUser(email, password);
+        if (res.user && res.user.subscriptionActive) {
+          setActiveView('dashboard');
+        } else {
+          setAuthModalMode('subscribe');
+          setIsSubscribeModalOpen(true);
+          setActiveView('dashboard');
+        }
+      }
+    } catch (err) {
+      setLocalError(err.message || 'Authentication failed. Please check your details.');
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    setLocalError(null);
+    try {
+      const mockCredential = `google_oauth_token_${Date.now()}`;
+      const res = await loginWithGoogle(mockCredential);
+      if (res.user && res.user.subscriptionActive) {
         setActiveView('dashboard');
       } else {
         setAuthModalMode('subscribe');
         setIsSubscribeModalOpen(true);
         setActiveView('dashboard');
       }
-    }, 800);
+    } catch (err) {
+      setLocalError('Google OAuth authentication failed.');
+    }
   };
 
   const activeQuote = PLACEHOLDER_TESTIMONIALS[activeQuoteIndex];
@@ -318,7 +350,7 @@ export default function AuthView() {
             >
               <button
                 type="button"
-                onClick={() => setAuthMode('signup')}
+                onClick={() => { setAuthMode('signup'); setLocalError(null); }}
                 className="font-mono"
                 style={{
                   padding: '0.6rem 0',
@@ -336,7 +368,7 @@ export default function AuthView() {
 
               <button
                 type="button"
-                onClick={() => setAuthMode('login')}
+                onClick={() => { setAuthMode('login'); setLocalError(null); }}
                 className="font-mono"
                 style={{
                   padding: '0.6rem 0',
@@ -363,11 +395,29 @@ export default function AuthView() {
               </h2>
             </div>
 
+            {/* Error Display Alert */}
+            {(localError || authError) && (
+              <div
+                className="font-mono"
+                style={{
+                  background: 'rgba(231, 76, 60, 0.15)',
+                  border: '1px solid #E74C3C',
+                  color: '#E74C3C',
+                  padding: '0.75rem 1rem',
+                  fontSize: '0.78rem',
+                  marginBottom: '1.25rem'
+                }}
+              >
+                ⚠️ {localError || authError}
+              </div>
+            )}
+
             {/* Social OAuth Buttons */}
             <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <button
                 type="button"
-                onClick={handleAuthSubmit}
+                onClick={handleGoogleAuth}
+                disabled={isAuthLoading}
                 style={{
                   flex: 1,
                   display: 'flex',
@@ -392,7 +442,8 @@ export default function AuthView() {
 
               <button
                 type="button"
-                onClick={handleAuthSubmit}
+                onClick={handleGoogleAuth}
+                disabled={isAuthLoading}
                 style={{
                   flex: 1,
                   display: 'flex',
@@ -484,10 +535,10 @@ export default function AuthView() {
                 />
               </div>
 
-              {/* Ringly Primary Spotlight-Style Sign In Button (Cream fill hover sweep 0.3s) */}
+              {/* Ringly Primary Spotlight-Style Sign In Button */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isAuthLoading}
                 className="ringly-auth-btn"
                 style={{
                   marginTop: '0.5rem',
@@ -500,7 +551,13 @@ export default function AuthView() {
                   cursor: 'pointer'
                 }}
               >
-                <span>{isSubmitting ? 'AUTHENTICATING...' : authMode === 'signup' ? 'CONTINUE TO PLAN CHECKOUT →' : 'LOG IN TO DASHBOARD →'}</span>
+                <span>
+                  {isAuthLoading
+                    ? 'AUTHENTICATING ACCOUNT...'
+                    : authMode === 'signup'
+                    ? 'CONTINUE TO PLAN CHECKOUT →'
+                    : 'LOG IN TO DASHBOARD →'}
+                </span>
               </button>
 
             </form>
