@@ -218,10 +218,10 @@ export default function AuthView() {
                 background: 'var(--bg-card, #1C3644)',
                 border: '1px solid var(--border-subtle, #3A5C6E)',
                 borderRadius: '0px',
-                padding: '1.25rem 1.5rem',
+                padding: isMobile ? '1rem' : '1.25rem 1.5rem',
                 display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '1rem',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+                gap: isMobile ? '0.75rem' : '1rem',
                 textAlign: 'center'
               }}
             >
@@ -349,7 +349,7 @@ export default function AuthView() {
               background: 'var(--bg-card, #1C3644)',
               border: '1px solid var(--border-subtle, #3A5C6E)',
               borderRadius: '0px',
-              padding: '2.5rem',
+              padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center'

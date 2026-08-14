@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export const StickyScroll = ({
   content,
@@ -13,6 +14,7 @@ export const StickyScroll = ({
   const scrollerRef = useRef(null);
   const itemRefs = useRef([]);
   const { setIsSubscribeModalOpen, isAuthenticated, setActiveView } = useApp();
+  const isMobile = useIsMobile(768);
 
   const handleSubscribeClick = () => {
     if (!isAuthenticated) {
@@ -69,22 +71,24 @@ export const StickyScroll = ({
       style={{
         position: 'relative',
         display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        gap: '2rem',
-        height: '30rem',
+        gap: isMobile ? '1rem' : '2rem',
+        height: isMobile ? 'auto' : '30rem',
+        maxHeight: isMobile ? '65vh' : 'none',
         overflowY: 'auto',
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
         borderRadius: '0px',
-        padding: '2.5rem',
+        padding: isMobile ? '0.5rem 0' : '2.5rem',
         background: 'transparent',
       }}
     >
       <style>{`#sticky-left::-webkit-scrollbar { display: none; }`}</style>
 
       {/* Left: text column */}
-      <div id="sticky-left" style={{ position: 'relative', maxWidth: '560px', width: '100%' }}>
+      <div id="sticky-left" style={{ position: 'relative', maxWidth: isMobile ? '100%' : '560px', width: '100%' }}>
         <div style={{ width: '100%' }}>
           {content.map((item, index) => {
             const isActive = activeCard === index;
@@ -92,7 +96,7 @@ export const StickyScroll = ({
               <div
                 key={item.title + index}
                 ref={(el) => (itemRefs.current[index] = el)}
-                style={{ marginTop: '5rem', marginBottom: '5rem' }}
+                style={{ marginTop: isMobile ? '2.5rem' : '5rem', marginBottom: isMobile ? '2.5rem' : '5rem' }}
               >
                 {/* Step marker */}
                 <motion.div
@@ -158,7 +162,8 @@ export const StickyScroll = ({
         </div>
       </div>
 
-      {/* Right: sticky panel */}
+      {/* Right: sticky panel — hidden on mobile to avoid overflow */}
+      {!isMobile && (
       <div
         style={{
           position: 'sticky',
@@ -272,6 +277,7 @@ export const StickyScroll = ({
           </span>
         </div>
       </div>
+      )}
     </div>
   );
 };

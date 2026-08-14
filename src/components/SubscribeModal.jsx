@@ -71,8 +71,10 @@ export default function SubscribeModal() {
       <div
         className="ringly-card view-fade-enter"
         style={{
-          maxWidth: '520px',
+          maxWidth: isMobile ? '100%' : '520px',
           width: '100%',
+          maxHeight: isMobile ? 'calc(100vh - 2rem)' : 'calc(100vh - 3rem)',
+          overflowY: 'auto',
           padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
           position: 'relative',
           background: 'var(--bg-card, #1C3644)',
@@ -86,14 +88,19 @@ export default function SubscribeModal() {
           onClick={() => setIsSubscribeModalOpen(false)}
           style={{
             position: 'absolute',
-            top: '1.25rem',
-            right: '1.25rem',
+            top: '1rem',
+            right: '1rem',
             background: 'none',
             border: 'none',
             color: 'var(--text-muted)',
             fontSize: '1.4rem',
             cursor: 'pointer',
-            lineHeight: 1
+            lineHeight: 1,
+            minWidth: '44px',
+            minHeight: '44px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
           ✕

@@ -579,5 +579,58 @@ html, body {
     overflow-x: hidden;
     width: 100%;
   }
+
+  .primary-button {
+    min-width: unset;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 0.92rem;
+  }
+
+  .button-borders {
+    width: 100%;
+  }
+
+  .button-borders:before,
+  .button-borders:after {
+    width: calc(100% + 0.4em);
+    left: -0.2em;
+  }
+
+  .btn-96 {
+    padding: 1.2rem 2.5rem;
+    font-size: 90%;
+    width: 100%;
+  }
+
+  .ringly-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .ringly-auth-btn {
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+  }
+
+  .section-spacing {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .section-spacing-lg {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
 }
 
+@media (max-width: 375px) {
+  .btn-96 {
+    padding: 1rem 1.5rem;
+    font-size: 85%;
+  }
+
+  .primary-button {
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+  }
+}

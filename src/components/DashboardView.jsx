@@ -42,11 +42,12 @@ export default function DashboardView() {
             background: 'var(--bg-dark-secondary, #162C37)',
             border: '1px solid var(--border-subtle, #3A5C6E)',
             borderRadius: '0px',
-            padding: '1.25rem 1.75rem',
-            marginBottom: '2rem',
+            padding: isMobile ? '1rem' : '1.25rem 1.75rem',
+            marginBottom: isMobile ? '1.5rem' : '2rem',
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             flexWrap: 'wrap',
-            alignItems: 'center',
+            alignItems: isMobile ? 'flex-start' : 'center',
             justifyContent: 'space-between',
             gap: '1rem'
           }}
@@ -88,7 +89,7 @@ export default function DashboardView() {
         </div>
 
         {/* Dashboard Title & Action Row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', marginBottom: isMobile ? '1.5rem' : '2rem', gap: '1rem', flexDirection: isMobile ? 'column' : 'row', flexWrap: 'wrap' }}>
           <div>
             <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.08em' }}>
               [ TELEPHONY CONTROL DASHBOARD ]
@@ -113,7 +114,9 @@ export default function DashboardView() {
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
               borderRadius: '0px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              width: isMobile ? '100%' : 'auto',
+              minHeight: '44px'
             }}
           >
             + ADD NEW REMINDER
@@ -121,7 +124,7 @@ export default function DashboardView() {
         </div>
 
         {/* Usage & Limit Summary Cards Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: isMobile ? '1rem' : '1.5rem', marginBottom: isMobile ? '2rem' : '2.5rem' }}>
           
           {/* Card 1: Usage Stat */}
           <div
@@ -220,16 +223,17 @@ export default function DashboardView() {
                       background: 'var(--bg-card, #1C3644)',
                       border: '1px solid var(--border-subtle, #3A5C6E)',
                       borderRadius: '0px',
-                      padding: '1.75rem 2rem',
+                      padding: isMobile ? '1.25rem 1rem' : '1.75rem 2rem',
                       display: 'flex',
-                      alignItems: 'center',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      alignItems: isMobile ? 'flex-start' : 'center',
                       justifyContent: 'space-between',
-                      gap: '1.5rem',
+                      gap: isMobile ? '1rem' : '1.5rem',
                       boxShadow: 'none',
                       flexWrap: 'wrap'
                     }}
                   >
-                    <div style={{ flex: 1, minWidth: '260px' }}>
+                    <div style={{ flex: 1, minWidth: isMobile ? '100%' : '200px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                         
                         {/* Status Tag */}
@@ -276,7 +280,7 @@ export default function DashboardView() {
                     </div>
 
                     {/* Action Buttons styled like SpotlightButton */}
-                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', width: isMobile ? '100%' : 'auto' }}>
                       
                       {rem.status === 'SCHEDULED' && (
                         <button
@@ -336,15 +340,15 @@ export default function DashboardView() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '1.5rem'
+            padding: isMobile ? '1rem' : '1.5rem'
           }}
         >
           <div
             className="ringly-card view-fade-enter"
             style={{
-              maxWidth: '500px',
+              maxWidth: isMobile ? '100%' : '500px',
               width: '100%',
-              padding: '2.5rem',
+              padding: isMobile ? '1.5rem 1.25rem' : '2.5rem',
               position: 'relative',
               background: 'var(--bg-card, #1C3644)',
               border: '1px solid var(--border-subtle, #3A5C6E)',
@@ -357,13 +361,18 @@ export default function DashboardView() {
               onClick={() => setIsAddModalOpen(false)}
               style={{
                 position: 'absolute',
-                top: '1.25rem',
-                right: '1.25rem',
+                top: '1rem',
+                right: '1rem',
                 background: 'none',
                 border: 'none',
                 color: 'var(--text-muted)',
                 fontSize: '1.4rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                minWidth: '44px',
+                minHeight: '44px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               ✕

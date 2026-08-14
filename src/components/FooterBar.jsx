@@ -76,7 +76,7 @@ export default function FooterBar() {
           <button
             onClick={() => setActiveView(activeView === 'home' ? 'dashboard' : 'home')}
             className="nav-link-btn"
-            style={{ fontSize: '0.72rem', padding: '0.4rem 0.85rem', minHeight: '38px' }}
+            style={{ fontSize: '0.72rem', padding: '0.4rem 0.85rem', minHeight: '44px' }}
           >
             {activeView === 'home' ? 'MY REMINDERS →' : '← SERVICE OVERVIEW'}
           </button>
