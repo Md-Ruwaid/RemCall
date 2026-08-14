@@ -79,7 +79,7 @@ export default function SubscribeModal() {
           position: 'relative',
           background: 'var(--bg-card, #1C3644)',
           border: '1px solid var(--border-subtle, #3A5C6E)',
-          borderRadius: '0px',
+          borderRadius: '6px 6px 0 0',
           boxShadow: 'none'
         }}
       >

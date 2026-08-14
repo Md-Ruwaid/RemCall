@@ -442,6 +442,7 @@ export default function AuthView() {
                     style={{
                       background: 'rgba(231, 76, 60, 0.15)',
                       border: '1px solid #E74C3C',
+                      borderRadius: '4px',
                       color: '#E74C3C',
                       padding: '0.75rem 1rem',
                       fontSize: '0.78rem',
@@ -459,6 +460,7 @@ export default function AuthView() {
                     style={{
                       background: 'rgba(245, 230, 200, 0.15)',
                       border: '1px solid var(--accent-cream)',
+                      borderRadius: '4px',
                       color: 'var(--accent-cream)',
                       padding: '0.75rem 1rem',
                       fontSize: '0.78rem',

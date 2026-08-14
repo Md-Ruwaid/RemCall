@@ -364,11 +364,32 @@ html, body {
   align-items: center;
   gap: 0.4rem;
   padding: 0.3rem 0.75rem;
-  border-radius: 0px;
+  border-radius: 4px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.custom-pill-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.custom-pill-option:hover {
+  border-color: var(--accent-cream);
+}
+
+.custom-pill-option.active {
+  border-color: var(--accent-cream);
+  background-color: var(--bg-card);
 }
 
 .badge-scheduled {
