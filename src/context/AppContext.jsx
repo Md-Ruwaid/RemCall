@@ -11,43 +11,48 @@ export function AppProvider({ children }) {
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
+  // Tutorial State — persisted to localStorage
+  const [hasSeenTutorial, setHasSeenTutorial] = useState(() => {
+    try {
+      return localStorage.getItem('ringly_tutorial_complete') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const completeTutorial = () => {
+    setHasSeenTutorial(true);
+    try {
+      localStorage.setItem('ringly_tutorial_complete', 'true');
+    } catch {
+      // localStorage not available, state still updates
+    }
+  };
+
+  const resetTutorial = () => {
+    setHasSeenTutorial(false);
+    try {
+      localStorage.removeItem('ringly_tutorial_complete');
+    } catch {
+      // no-op
+    }
+  };
+
   // Current User State (Subscriber record)
   const [user, setUser] = useState({
     name: 'Sarah Connor',
     email: 'sarah@example.com',
     phone: '+1 (555) 019-2834',
     subscriptionActive: true,
-    dailyCallLimit: 6,
-    callsUsedToday: 2,
-    planName: 'Pro Protocol',
+    dailyCallLimit: 3,
+    callsUsedToday: 1,
+    planName: 'Standard Protocol',
     subscriptionEnd: getUpcomingSundayISO(),
     inventoryCredits: 1
   });
 
-  // Reminders List
-  const [reminders, setReminders] = useState([
-    {
-      id: 'rem-1',
-      title: 'Q3 FINANCIAL REVIEW PREPARATION',
-      time: 'TODAY, 4:00 PM',
-      status: 'SCHEDULED', // 'SCHEDULED' | 'CALLED' | 'MISSED'
-      notes: 'Operator will verify slide deck readiness before executive meeting.'
-    },
-    {
-      id: 'rem-2',
-      title: 'CLIENT CONTRACT SIGNOFF FOLLOW-UP',
-      time: 'TODAY, 11:30 AM',
-      status: 'CALLED',
-      notes: 'Call completed successfully by Operator 04. Verified doc signed.'
-    },
-    {
-      id: 'rem-3',
-      title: 'WEEKLY METRICS & ACCOUNTABILITY CHECK-IN',
-      time: 'YESTERDAY, 5:00 PM',
-      status: 'MISSED',
-      notes: 'Subscriber line busy at scheduled 5:00 PM call slot.'
-    }
-  ]);
+  // Reminders List — enriched with proper Date-based callTime fields
+  const [reminders, setReminders] = useState(() => generateMockReminders());
 
   // Pricing Rule Calculation: ₹149 + ₹60 × (calls - 1)
   const calculatePrice = (callsPerDay) => {
@@ -56,11 +61,11 @@ export function AppProvider({ children }) {
   };
 
   // Add Reminder
-  const addReminder = (title, time, notes = '') => {
+  const addReminder = (title, callTime, notes = '') => {
     const newRem = {
       id: `rem-${Date.now()}`,
       title: title.toUpperCase(),
-      time: time.toUpperCase(),
+      callTime: callTime instanceof Date ? callTime.toISOString() : callTime,
       status: 'SCHEDULED',
       notes
     };
@@ -91,14 +96,29 @@ export function AppProvider({ children }) {
     setIsSubscribeModalOpen(false);
   };
 
-  // Login handler
-  const loginUser = (email, phone) => {
-    setUser(prev => ({
-      ...prev,
-      email: email || prev.email,
-      phone: phone || prev.phone
-    }));
+  // Login handler — supports both (email, phone) and object payload from Google Auth
+  const loginUser = (emailOrUser, phone) => {
+    if (typeof emailOrUser === 'object' && emailOrUser !== null) {
+      setUser(prev => ({
+        ...prev,
+        ...emailOrUser,
+        subscriptionActive: emailOrUser.subscriptionActive ?? prev.subscriptionActive ?? true
+      }));
+    } else {
+      setUser(prev => ({
+        ...prev,
+        email: emailOrUser || prev.email,
+        phone: phone || prev.phone
+      }));
+    }
     setIsAuthenticated(true);
+    setActiveView('dashboard');
+  };
+
+  // Logout handler
+  const logoutUser = () => {
+    setIsAuthenticated(false);
+    setActiveView('home');
   };
 
   return (
@@ -112,6 +132,9 @@ export function AppProvider({ children }) {
         setAuthModalMode,
         isAuthenticated,
         setIsAuthenticated,
+        hasSeenTutorial,
+        completeTutorial,
+        resetTutorial,
         user,
         setUser,
         reminders,
@@ -120,7 +143,8 @@ export function AppProvider({ children }) {
         updateReminderStatus,
         calculatePrice,
         activateSubscription,
-        loginUser
+        loginUser,
+        logoutUser
       }}
     >
       {children}
@@ -132,7 +156,8 @@ export function useApp() {
   return useContext(AppContext);
 }
 
-// Helper date utility
+// ─── Helper Utilities ───
+
 function getUpcomingSundayISO() {
   const d = new Date();
   const day = d.getDay();
@@ -141,4 +166,101 @@ function getUpcomingSundayISO() {
   sunday.setDate(d.getDate() + daysUntilSunday);
   sunday.setHours(23, 59, 59, 999);
   return sunday.toISOString();
+}
+
+/**
+ * Generate realistic mock reminders with proper Date-based callTime fields.
+ * Covers all four statuses: Scheduled, Called, Missed, In Inventory.
+ */
+function generateMockReminders() {
+  const now = new Date();
+
+  // Helper: create a date relative to now
+  const offsetDate = (hours, minutes = 0) => {
+    const d = new Date(now);
+    d.setHours(now.getHours() + hours, now.getMinutes() + minutes, 0, 0);
+    return d.toISOString();
+  };
+
+  // Helper: create a date at a specific time today
+  const todayAt = (hour, minute = 0) => {
+    const d = new Date(now);
+    d.setHours(hour, minute, 0, 0);
+    return d.toISOString();
+  };
+
+  // Helper: create a date at a specific time tomorrow
+  const tomorrowAt = (hour, minute = 0) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() + 1);
+    d.setHours(hour, minute, 0, 0);
+    return d.toISOString();
+  };
+
+  // Helper: create a date yesterday
+  const yesterdayAt = (hour, minute = 0) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - 1);
+    d.setHours(hour, minute, 0, 0);
+    return d.toISOString();
+  };
+
+  return [
+    // ── Upcoming Scheduled (future) ──
+    {
+      id: 'rem-001',
+      title: 'Q3 FINANCIAL REVIEW PREPARATION',
+      callTime: offsetDate(1, 15),
+      status: 'SCHEDULED',
+      notes: 'Operator will verify slide deck readiness before executive meeting.'
+    },
+    {
+      id: 'rem-002',
+      title: 'CLIENT CONTRACT SIGNOFF FOLLOW-UP',
+      callTime: offsetDate(3, 30),
+      status: 'SCHEDULED',
+      notes: 'Confirm that the legal team has reviewed section 4.2 amendments.'
+    },
+    {
+      id: 'rem-003',
+      title: 'WEEKLY TEAM STANDUP REMINDER',
+      callTime: tomorrowAt(9, 0),
+      status: 'SCHEDULED',
+      notes: 'Prepare sprint velocity metrics before the call.'
+    },
+    {
+      id: 'rem-004',
+      title: 'DENTIST APPOINTMENT CHECK-IN',
+      callTime: tomorrowAt(14, 30),
+      status: 'SCHEDULED',
+      notes: ''
+    },
+
+    // ── Past — Called (completed successfully) ──
+    {
+      id: 'rem-005',
+      title: 'MORNING WORKOUT ACCOUNTABILITY',
+      callTime: todayAt(7, 0),
+      status: 'CALLED',
+      notes: 'Call completed. Subscriber confirmed 30-min session done.'
+    },
+
+    // ── Past — Missed ──
+    {
+      id: 'rem-006',
+      title: 'MEDICATION REMINDER',
+      callTime: yesterdayAt(20, 0),
+      status: 'MISSED',
+      notes: 'Subscriber line busy. Retried once, no pickup.'
+    },
+
+    // ── In Inventory ──
+    {
+      id: 'rem-007',
+      title: 'QUARTERLY TAX FILING PREP',
+      callTime: yesterdayAt(15, 0),
+      status: 'IN INVENTORY',
+      notes: 'Moved to inventory — subscriber requested reschedule.'
+    }
+  ];
 }
