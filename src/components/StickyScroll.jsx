@@ -27,13 +27,18 @@ export const StickyScroll = ({
   // Direct scroll detection: pick the card whose center is closest to the focus line
   useEffect(() => {
     const scroller = scrollerRef.current;
+    let ticking = false;
 
     const onScroll = () => {
       let closestIndex = 0;
       let closestDist = Infinity;
 
       if (isMobile) {
-        const targetLine = window.innerHeight * 0.4;
+        // Account for fixed header height (~70px) to match actual visible viewport
+        const headerOffset = 70;
+        const visibleViewportHeight = Math.max(300, window.innerHeight - headerOffset);
+        const targetLine = headerOffset + visibleViewportHeight * 0.35;
+
         itemRefs.current.forEach((el, index) => {
           if (!el) return;
           const rect = el.getBoundingClientRect();
@@ -45,10 +50,10 @@ export const StickyScroll = ({
           }
         });
 
-        // Ensure Card 0 is selected when top of section is near or above viewport
+        // Narrow 18% viewport threshold for card 0 so it unlocks smoothly when scrolling down
         if (itemRefs.current[0]) {
           const firstRect = itemRefs.current[0].getBoundingClientRect();
-          if (firstRect.top > 0 && firstRect.top < window.innerHeight * 0.7) {
+          if (firstRect.top > 0 && firstRect.top < window.innerHeight * 0.18) {
             closestIndex = 0;
           }
         }
@@ -74,15 +79,26 @@ export const StickyScroll = ({
       }
     };
 
+    // rAF Throttle Pattern to batch DOM reads and prevent redundant layout recalculations
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          onScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
     if (scroller) {
-      scroller.addEventListener('scroll', onScroll, { passive: true });
+      scroller.addEventListener('scroll', handleScroll, { passive: true });
     }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     return () => {
-      if (scroller) scroller.removeEventListener('scroll', onScroll);
-      window.removeEventListener('scroll', onScroll);
+      if (scroller) scroller.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [onActiveCardChange, isMobile]);
 
@@ -121,7 +137,7 @@ export const StickyScroll = ({
               <div
                 key={item.title + index}
                 ref={(el) => (itemRefs.current[index] = el)}
-                style={{ marginTop: isMobile ? '2.5rem' : '5rem', marginBottom: isMobile ? '2.5rem' : '5rem' }}
+                style={{ marginTop: isMobile ? '3.5rem' : '5rem', marginBottom: isMobile ? '3.5rem' : '5rem' }}
               >
                 {/* Step marker */}
                 <motion.div
