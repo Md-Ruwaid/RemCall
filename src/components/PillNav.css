@@ -19,6 +19,7 @@
     right: 1.25rem;
     left: auto;
     width: auto;
+    max-width: calc(100vw - 7.5rem);
     z-index: 100;
   }
 
@@ -27,6 +28,17 @@
     justify-content: flex-end;
     padding: 0;
     background: transparent;
+  }
+
+  .pill-list {
+    gap: 0.3rem;
+    flex-wrap: nowrap;
+  }
+
+  .pill {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.74rem;
+    letter-spacing: 0.03em;
   }
 }
 
@@ -143,103 +155,4 @@
   flex-shrink: 0;
 }
 
-.desktop-only {
-  display: block;
-}
 
-.mobile-only {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .desktop-only {
-    display: none;
-  }
-
-  .mobile-only {
-    display: block;
-  }
-}
-
-.mobile-menu-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 0px;
-  background: var(--base, #F5E6C8);
-  border: 1px solid var(--accent-cream, #F5E6C8);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  cursor: pointer;
-  padding: 0;
-  position: relative;
-  box-shadow: none;
-}
-
-@media (max-width: 768px) {
-  .mobile-menu-button {
-    display: flex;
-  }
-}
-
-.hamburger-line {
-  width: 18px;
-  height: 2px;
-  background: var(--pill-bg, #162C37);
-  border-radius: 0px;
-  transition: all 0.2s ease;
-  transform-origin: center;
-}
-
-.mobile-menu-popover {
-  position: fixed;
-  top: 4.5rem;
-  right: 1.25rem;
-  left: 1.25rem;
-  background: var(--bg-card, #1C3644);
-  border: 1.5px solid var(--border-subtle, #3A5C6E);
-  border-radius: 0px;
-  box-shadow: none;
-  z-index: 998;
-  opacity: 0;
-  transform-origin: top center;
-  visibility: hidden;
-}
-
-.mobile-menu-list {
-  list-style: none;
-  margin: 0;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.mobile-menu-popover .mobile-menu-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 10px 16px;
-  color: var(--pill-text, #F5E6C8);
-  background-color: var(--pill-bg, #162C37);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-family: var(--font-display, 'Space Grotesk', sans-serif);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 0px;
-  transition: all 0.2s ease;
-  border: 1px solid var(--border-subtle, #3A5C6E);
-  width: 100%;
-  text-align: center;
-}
-
-.mobile-menu-popover .mobile-menu-link:hover {
-  cursor: pointer;
-  background-color: var(--base);
-  color: var(--hover-text, #10212A);
-}
