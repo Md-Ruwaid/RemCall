@@ -34,10 +34,10 @@ export const StickyScroll = ({
       let closestDist = Infinity;
 
       if (isMobile) {
-        // Account for fixed header height (~70px) to match actual visible viewport
+        // Account for fixed header height (~70px) to match actual visible viewport center
         const headerOffset = 70;
         const visibleViewportHeight = Math.max(300, window.innerHeight - headerOffset);
-        const targetLine = headerOffset + visibleViewportHeight * 0.35;
+        const targetLine = headerOffset + visibleViewportHeight * 0.4;
 
         itemRefs.current.forEach((el, index) => {
           if (!el) return;
@@ -49,14 +49,6 @@ export const StickyScroll = ({
             closestIndex = index;
           }
         });
-
-        // Narrow 18% viewport threshold for card 0 so it unlocks smoothly when scrolling down
-        if (itemRefs.current[0]) {
-          const firstRect = itemRefs.current[0].getBoundingClientRect();
-          if (firstRect.top > 0 && firstRect.top < window.innerHeight * 0.18) {
-            closestIndex = 0;
-          }
-        }
       } else if (scroller) {
         const scrollCenter = scroller.scrollTop + scroller.clientHeight / 2;
         itemRefs.current.forEach((el, index) => {
@@ -137,7 +129,16 @@ export const StickyScroll = ({
               <div
                 key={item.title + index}
                 ref={(el) => (itemRefs.current[index] = el)}
-                style={{ marginTop: isMobile ? '3.5rem' : '5rem', marginBottom: isMobile ? '3.5rem' : '5rem' }}
+                style={{
+                  minHeight: isMobile ? '70vh' : 'auto',
+                  display: isMobile ? 'flex' : 'block',
+                  flexDirection: isMobile ? 'column' : 'initial',
+                  justifyContent: isMobile ? 'center' : 'initial',
+                  paddingTop: isMobile ? '2.5rem' : '0',
+                  paddingBottom: isMobile ? '2.5rem' : '0',
+                  marginTop: isMobile ? '1rem' : '5rem',
+                  marginBottom: isMobile ? '1rem' : '5rem'
+                }}
               >
                 {/* Step marker */}
                 <motion.div
