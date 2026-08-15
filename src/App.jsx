@@ -9,7 +9,7 @@ import AuthView from './components/AuthView';
 import ResetPasswordView from './components/ResetPasswordView';
 import SubscribeModal from './components/SubscribeModal';
 import ClickSpark from './components/ClickSpark';
-import SideRays from './components/SideRays';
+import LightRays from './components/LightRays';
 
 import { useIsMobile } from './hooks/useIsMobile';
 import { useScrollDirection } from './hooks/useScrollDirection';
@@ -76,7 +76,7 @@ function AppShell() {
         overflow: isHomeLocked ? 'hidden' : 'visible'
       }}>
 
-        {/* Full-Screen WebGL Background SideRays */}
+        {/* Full-Screen WebGL Background LightRays */}
         <div style={{
           position: 'fixed',
           top: 0,
@@ -85,20 +85,20 @@ function AppShell() {
           height: '100vh',
           pointerEvents: 'none',
           zIndex: 0,
-          opacity: isMobile ? 0.4 : 0.55
+          opacity: isMobile ? 0.45 : 0.65
         }}>
-          <SideRays
-            speed={2.0}
-            rayColor1="#F5E6C8"
-            rayColor2="#162C37"
-            intensity={1.8}
-            spread={2.2}
-            origin="top-right"
-            tilt={0}
-            saturation={1.2}
-            blend={0.65}
-            falloff={1.8}
-            opacity={0.6}
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#F5E6C8"
+            raysSpeed={1.5}
+            lightSpread={0.8}
+            rayLength={1.4}
+            followMouse={true}
+            mouseInfluence={0.12}
+            noiseAmount={0.08}
+            distortion={0.05}
+            fadeDistance={1.2}
+            saturation={1.0}
           />
         </div>
 
