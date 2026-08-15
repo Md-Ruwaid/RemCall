@@ -32,6 +32,33 @@ export function AppProvider({ children }) {
   // Reminders List from DB
   const [reminders, setReminders] = useState([]);
 
+  // Tutorial State — persisted to localStorage
+  const [hasSeenTutorial, setHasSeenTutorial] = useState(() => {
+    try {
+      return localStorage.getItem('ringly_tutorial_complete') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const completeTutorial = () => {
+    setHasSeenTutorial(true);
+    try {
+      localStorage.setItem('ringly_tutorial_complete', 'true');
+    } catch {
+      // localStorage not available, state still updates
+    }
+  };
+
+  const resetTutorial = () => {
+    setHasSeenTutorial(false);
+    try {
+      localStorage.removeItem('ringly_tutorial_complete');
+    } catch {
+      // no-op
+    }
+  };
+
   // Derived Authentication Flag
   const isAuthenticated = !!session;
 
@@ -275,6 +302,9 @@ export function AppProvider({ children }) {
         setAuthModalMode,
         isAuthenticated,
         session,
+        hasSeenTutorial,
+        completeTutorial,
+        resetTutorial,
         authError,
         setAuthError,
         isAuthLoading,

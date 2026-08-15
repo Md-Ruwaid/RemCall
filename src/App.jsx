@@ -4,7 +4,7 @@ import PillNav from './components/PillNav';
 import UnifiedMainView from './components/UnifiedMainView';
 import AboutView from './components/AboutView';
 import HowItWorksView from './components/HowItWorksView';
-import DashboardView from './components/DashboardView';
+import DashboardPage from './components/dashboard/DashboardPage';
 import AuthView from './components/AuthView';
 import ResetPasswordView from './components/ResetPasswordView';
 import SubscribeModal from './components/SubscribeModal';
@@ -55,6 +55,7 @@ function AppShell() {
   }, [setActiveView]);
 
   const isHomeLocked = activeView === 'home' && !isMobile;
+  const isDashboardView = activeView === 'dashboard' && isAuthenticated;
 
   return (
     <ClickSpark
@@ -74,46 +75,50 @@ function AppShell() {
         overflow: isHomeLocked ? 'hidden' : 'visible'
       }}>
 
-        {/* Top Logo — fixed top-left (Hides on scroll down, shows on scroll up) */}
-        <div
-          onClick={() => handleNavClick('home')}
-          style={{
-            position: 'fixed',
-            top: isMobile ? '1.25rem' : '1.5rem',
-            left: isMobile ? '1.25rem' : '2.5rem',
-            zIndex: 60,
-            cursor: 'pointer',
-            transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-160%)',
-            opacity: isHeaderVisible ? 1 : 0,
-            transition: 'transform 0.35s ease, opacity 0.35s ease',
-            pointerEvents: isHeaderVisible ? 'auto' : 'none'
-          }}
-        >
-          <div style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: isMobile ? '1.25rem' : '1.4rem',
-            fontWeight: 800,
-            letterSpacing: '0.08em',
-            color: 'var(--text-white)',
-            textTransform: 'uppercase'
-          }}>
-            RINGLY
+        {/* Public Top Logo — fixed top-left (Hides on scroll down, shows on scroll up) */}
+        {!isDashboardView && (
+          <div
+            onClick={() => handleNavClick('home')}
+            style={{
+              position: 'fixed',
+              top: isMobile ? '1.25rem' : '1.5rem',
+              left: isMobile ? '1.25rem' : '2.5rem',
+              zIndex: 60,
+              cursor: 'pointer',
+              transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-160%)',
+              opacity: isHeaderVisible ? 1 : 0,
+              transition: 'transform 0.35s ease, opacity 0.35s ease',
+              pointerEvents: isHeaderVisible ? 'auto' : 'none'
+            }}
+          >
+            <div style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: isMobile ? '1.25rem' : '1.4rem',
+              fontWeight: 800,
+              letterSpacing: '0.08em',
+              color: 'var(--text-white)',
+              textTransform: 'uppercase'
+            }}>
+              RINGLY
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* React Bits PillNav Component (Home, About Us, Dashboard, Auth) */}
-        <PillNav
-          visible={isHeaderVisible}
-          logoAlt="Ringly Logo"
-          items={navItems}
-          activeHref={`#${activeView}`}
-          baseColor="#F5E6C8"
-          pillColor="#162C37"
-          hoveredPillTextColor="#F5E6C8"
-          pillTextColor="#F5E6C8"
-          ease="power2.easeOut"
-          initialLoadAnimation={true}
-        />
+        {/* React Bits PillNav Component for Public Marketing Pages */}
+        {!isDashboardView && (
+          <PillNav
+            visible={isHeaderVisible}
+            logoAlt="Ringly Logo"
+            items={navItems}
+            activeHref={`#${activeView}`}
+            baseColor="#F5E6C8"
+            pillColor="#162C37"
+            hoveredPillTextColor="#F5E6C8"
+            pillTextColor="#F5E6C8"
+            ease="power2.easeOut"
+            initialLoadAnimation={true}
+          />
+        )}
 
         {/* Main Full-Width Content Container */}
         <div style={{
@@ -131,7 +136,7 @@ function AppShell() {
             {activeView === 'how-it-works' && <HowItWorksView />}
             {activeView === 'auth' && <AuthView />}
             {activeView === 'reset-password' && <ResetPasswordView />}
-            {activeView === 'dashboard' && isAuthenticated && <DashboardView />}
+            {activeView === 'dashboard' && isAuthenticated && <DashboardPage />}
           </main>
           <SubscribeModal />
         </div>
