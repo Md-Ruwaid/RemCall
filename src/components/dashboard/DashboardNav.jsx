@@ -16,6 +16,7 @@ export default function DashboardNav({
   activeTab,
   onTabChange,
   onOpenSchedule,
+  onOpenTutorial,
   scheduledCount,
   historyCount
 }) {
@@ -74,6 +75,19 @@ export default function DashboardNav({
           >
             <span>+ SCHEDULE</span>
           </button>
+
+          {onOpenTutorial && (
+            <button
+              type="button"
+              className="dashboard-nav-exit-btn font-mono"
+              onClick={onOpenTutorial}
+              aria-label="Open onboarding tutorial"
+              title="Re-open Onboarding Tutorial"
+              style={{ borderColor: 'var(--accent-cream)', color: 'var(--accent-cream)' }}
+            >
+              ? TUTORIAL
+            </button>
+          )}
 
           <button
             type="button"

@@ -10,8 +10,8 @@ import ScheduleCallModal from './ScheduleCallModal';
 import DashboardTutorial from './DashboardTutorial';
 import './Dashboard.css';
 
-// Feature Flag: Tutorial disabled for V1.1 as requested (preserved for future release)
-const TUTORIAL_ENABLED = false;
+// Feature Flag: Interactive onboarding tutorial enabled
+const TUTORIAL_ENABLED = true;
 
 /**
  * DashboardPage — Authenticated Subscriber Dashboard V1.1
@@ -53,6 +53,7 @@ export default function DashboardPage() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenSchedule={() => setIsScheduleModalOpen(true)}
+        onOpenTutorial={() => setShowTutorial(true)}
         scheduledCount={scheduledCount}
         historyCount={recentHistory.length}
       />
