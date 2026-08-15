@@ -130,12 +130,12 @@ export const StickyScroll = ({
                 key={item.title + index}
                 ref={(el) => (itemRefs.current[index] = el)}
                 style={{
-                  minHeight: isMobile ? '70vh' : 'auto',
+                  minHeight: isMobile ? '35vh' : 'auto',
                   display: isMobile ? 'flex' : 'block',
                   flexDirection: isMobile ? 'column' : 'initial',
                   justifyContent: isMobile ? 'center' : 'initial',
-                  paddingTop: isMobile ? '2.5rem' : '0',
-                  paddingBottom: isMobile ? '2.5rem' : '0',
+                  paddingTop: isMobile ? '1.5rem' : '0',
+                  paddingBottom: isMobile ? '1.5rem' : '0',
                   marginTop: isMobile ? '1rem' : '5rem',
                   marginBottom: isMobile ? '1rem' : '5rem'
                 }}
