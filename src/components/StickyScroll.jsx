@@ -10,7 +10,7 @@ export const StickyScroll = ({
 }) => {
   const [activeCard, setActiveCard] = useState(0);
   const [direction, setDirection] = useState(1);
-  const prevCard = useRef(0);
+  const prevCard = useRef(-1);
   const scrollerRef = useRef(null);
   const itemRefs = useRef([]);
   const { setIsSubscribeModalOpen, isAuthenticated, setActiveView } = useApp();
@@ -24,7 +24,7 @@ export const StickyScroll = ({
     }
   };
 
-  // Direct scroll detection: pick the card whose center is closest to the container's center
+  // Direct scroll detection: pick the card whose center is closest to the focus line
   useEffect(() => {
     const scroller = scrollerRef.current;
 
@@ -33,17 +33,25 @@ export const StickyScroll = ({
       let closestDist = Infinity;
 
       if (isMobile) {
-        const viewportCenter = window.innerHeight / 2;
+        const targetLine = window.innerHeight * 0.4;
         itemRefs.current.forEach((el, index) => {
           if (!el) return;
           const rect = el.getBoundingClientRect();
           const itemCenter = rect.top + rect.height / 2;
-          const dist = Math.abs(viewportCenter - itemCenter);
+          const dist = Math.abs(targetLine - itemCenter);
           if (dist < closestDist) {
             closestDist = dist;
             closestIndex = index;
           }
         });
+
+        // Ensure Card 0 is selected when top of section is near or above viewport
+        if (itemRefs.current[0]) {
+          const firstRect = itemRefs.current[0].getBoundingClientRect();
+          if (firstRect.top > 0 && firstRect.top < window.innerHeight * 0.7) {
+            closestIndex = 0;
+          }
+        }
       } else if (scroller) {
         const scrollCenter = scroller.scrollTop + scroller.clientHeight / 2;
         itemRefs.current.forEach((el, index) => {
@@ -78,7 +86,6 @@ export const StickyScroll = ({
     };
   }, [onActiveCardChange, isMobile]);
 
-
   // Spring config — tight, zero wobble
   const spring = { type: "spring", stiffness: 420, damping: 42 };
   const fadeEase = { duration: 0.28, ease: [0.16, 1, 0.3, 1] };
@@ -94,8 +101,8 @@ export const StickyScroll = ({
         alignItems: 'flex-start',
         gap: isMobile ? '1rem' : '2rem',
         height: isMobile ? 'auto' : '30rem',
-        maxHeight: isMobile ? '65vh' : 'none',
-        overflowY: 'auto',
+        maxHeight: isMobile ? 'none' : 'none',
+        overflowY: isMobile ? 'visible' : 'auto',
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
         borderRadius: '0px',
