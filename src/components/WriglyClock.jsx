@@ -1,19 +1,19 @@
 import React, { useRef, useEffect } from 'react';
 
-// Ringly Website Theme Integrated Palette
+// Ringly Light Precision Theme Integrated Palette
 const PALETTE = {
-  dialNormal: { r: 18, g: 36, b: 46 },       // Deep Dark Slate Navy (#12242E)
-  dialFlash: { r: 53, g: 28, b: 25 },        // Miss Flash Dark Red (#351C19)
-  bevelNormal: { r: 35, g: 70, b: 86 },      // Subtle Slate Border (#234656)
-  bevelFlash: { r: 189, g: 166, b: 165 },    // Miss Flash Ring Tint (#BDA6A5)
-  hand: '#F5E6C8',                            // Warm Pale Cream
-  handMuted: 'rgba(245, 230, 200, 0.75)',     // Sleek Pale Cream
-  numbers: '#F5E6C8',                        // Hour Numbers
-  ticksMajor: 'rgba(245, 230, 200, 0.65)',   // Major Hour Ticks
-  ticksMinor: 'rgba(245, 230, 200, 0.25)',   // Minor Ticks
-  orange: { r: 253, g: 107, b: 0 },          // Busywork Amber Orange (#FD6B00)
-  gray: { r: 112, g: 111, b: 110 },          // Lost Time Slate Gray (#706F6E)
-  meetingMark: '#E74C3C'                     // Signal Red (#E74C3C)
+  dialNormal: { r: 255, g: 255, b: 255 },     // Pure White Dial (#FFFFFF)
+  dialFlash: { r: 253, g: 242, b: 242 },      // Soft Coral Flash (#FDF2F2)
+  bevelNormal: { r: 231, g: 228, b: 220 },    // Subtle Border (#E7E4DC)
+  bevelFlash: { r: 229, g: 75, b: 63 },       // Coral Bevel Flash (#E54B3F)
+  hand: '#171717',                            // Rich Charcoal Hands
+  handMuted: 'rgba(23, 23, 23, 0.45)',        // Muted Charcoal Minute Hand
+  numbers: '#171717',                         // Hour Numerals
+  ticksMajor: 'rgba(23, 23, 23, 0.55)',      // Major Hour Ticks
+  ticksMinor: 'rgba(23, 23, 23, 0.18)',      // Minor Ticks
+  orange: { r: 217, g: 154, b: 56 },          // Warm Amber (#D99A38)
+  gray: { r: 180, g: 178, b: 172 },          // Subtle Muted Gray (#B4B2AC)
+  meetingMark: '#E54B3F'                      // Restrained Coral (#E54B3F)
 };
 
 export default function WriglyClock({ size = 400, className = '', style = {} }) {

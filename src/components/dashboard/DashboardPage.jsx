@@ -7,24 +7,9 @@ import CallsView from './CallsView';
 import HistoryView from './HistoryView';
 import SubscriptionView from './SubscriptionView';
 import ScheduleCallModal from './ScheduleCallModal';
-import DashboardTutorial from './DashboardTutorial';
 import './Dashboard.css';
 
-// Feature Flag: Interactive onboarding tutorial enabled
-const TUTORIAL_ENABLED = true;
-
-/**
- * DashboardPage — Authenticated Subscriber Dashboard V1.1
- * 
- * Re-architected into clear subviews:
- *   - OVERVIEW: High-impact single-viewport summary (Next Call, Today summary, Plan summary, Primary CTA)
- *   - CALLS: Chronological Today's Timeline + Upcoming Scheduled Call Tickets
- *   - HISTORY: Log archive of completed, missed, and inventory calls
- *   - SUBSCRIPTION: Managed telephony protocol, daily allowance, line settings
- */
 export default function DashboardPage() {
-  const { hasSeenTutorial, completeTutorial } = useApp();
-
   const {
     nextCall,
     todayCalls,
@@ -36,24 +21,16 @@ export default function DashboardPage() {
     user,
   } = useDashboardData();
 
-  // Active Subview Tab: 'overview' | 'calls' | 'history' | 'subscription'
   const [activeTab, setActiveTab] = useState('overview');
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(TUTORIAL_ENABLED && !hasSeenTutorial);
-
-  const handleTutorialComplete = () => {
-    completeTutorial();
-    setShowTutorial(false);
-  };
 
   return (
     <div className="dashboard-app-root view-fade-enter">
-      {/* 1. Dedicated Application Navigation Bar */}
+      {/* 1. Clean Navigation Bar */}
       <DashboardNav
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenSchedule={() => setIsScheduleModalOpen(true)}
-        onOpenTutorial={() => setShowTutorial(true)}
         scheduledCount={scheduledCount}
         historyCount={recentHistory.length}
       />
@@ -101,11 +78,6 @@ export default function DashboardPage() {
         isOpen={isScheduleModalOpen}
         onClose={() => setIsScheduleModalOpen(false)}
       />
-
-      {/* 4. Onboarding Tutorial (Preserved for future use) */}
-      {showTutorial && (
-        <DashboardTutorial onComplete={handleTutorialComplete} />
-      )}
     </div>
   );
 }

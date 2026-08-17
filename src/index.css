@@ -1,464 +1,315 @@
-/* Ringly Telephony Operational Design System */
+/* RINGLY — Light, Calm, Human, Precision Design System */
 
 :root {
-  --bg-dark: #10212A;
-  --bg-dark-secondary: #162C37;
-  --bg-card: #1C3644;
-  --bg-card-hover: #224252;
-  --accent-cream: #F5E6C8;
-  --accent-green: #2ECC71;
-  --accent-red: #E74C3C;
-  --text-white: #FFFFFF;
-  --text-muted: #8EA8B6;
-  --text-mono: #A0C0D0;
-  --border-subtle: #244656;
+  /* Core Surface & Canvas Colors */
+  --bg-base: #F7F6F2;
+  --bg-surface: #FFFFFF;
+  --bg-surface-subtle: #F0EDE6;
+  --bg-surface-muted: #E8E5DD;
+  --bg-surface-hover: #FAFAF9;
   
-  --font-display: 'Space Grotesk', -apple-system, sans-serif;
-  --font-mono: 'Space Mono', monospace;
-  --font-body: 'Inter', -apple-system, sans-serif;
+  /* Text Tokens */
+  --text-primary: #171717;
+  --text-secondary: #6F6F6A;
+  --text-tertiary: #9E9D97;
+  --text-inverse: #FFFFFF;
 
-  --radius-card: 0px;
-  --radius-button: 0px;
+  /* Border Tokens */
+  --border-subtle: #E7E4DC;
+  --border-medium: #D5D1C6;
+  --border-focus: #171717;
+
+  /* Restrained Accents */
+  --accent-coral: #E54B3F;
+  --accent-coral-hover: #D43E32;
+  --accent-coral-subtle: #FDF2F1;
+
+  --accent-amber: #D99A38;
+  --accent-amber-subtle: #FDF9F2;
+
+  --accent-green: #2F8F68;
+  --accent-green-hover: #267756;
+  --accent-green-subtle: #F0F9F5;
+
+  /* Legacy Compatibility Aliases (to ensure smooth transition across all components) */
+  --bg-dark: #F7F6F2;
+  --bg-dark-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FAFAF9;
+  --accent-cream: #171717;
+  --accent-red: #E54B3F;
+  --text-white: #171717;
+  --text-muted: #6F6F6A;
+  --text-mono: #6F6F6A;
+
+  /* Typography System — Single Primary Sans-Serif Stack */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Restrained Geometry */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --radius-card: 12px;
+  --radius-button: 8px;
+
+  /* Elevation & Shadows */
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-card: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-modal: 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+
+  /* Containers */
+  --max-width: 1140px;
+  --max-width-narrow: 760px;
 }
 
-* {
+/* Reset & Box-Sizing */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
-  background-color: var(--bg-dark);
-  color: var(--text-white);
-  font-family: var(--font-body);
+html {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
   min-height: 100vh;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
   overflow-x: hidden;
 }
 
-/* Monospace Technical Utilities */
+/* Accessibility Focus Ring */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Typography Utilities */
+.font-sans {
+  font-family: var(--font-sans);
+}
+
 .font-mono {
   font-family: var(--font-mono);
-  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
 }
 
 .font-display {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
 }
 
-.text-cream {
-  color: var(--accent-cream);
-}
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-coral { color: var(--accent-coral); }
+.text-green { color: var(--accent-green); }
+.text-amber { color: var(--accent-amber); }
 
-.text-muted {
-  color: var(--text-muted);
-}
-
-/* Layout Grid & Asymmetric Containers */
+/* Layout Containers */
 .container-wide {
-  max-width: 1320px;
-  margin: 0 auto;
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.container-narrow {
-  max-width: 900px;
-  margin: 0 auto;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
 
-/* Purposeful Cards */
+.container-narrow {
+  max-width: var(--max-width-narrow);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Core Card Primitive */
 .ringly-card {
-  background: var(--bg-dark-secondary);
+  background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-card);
-  padding: 2.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-subtle);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Custom Navbar Links Hover Animation (Exact Spec) */
-.nav-link-btn {
-  text-decoration: none;
-  position: relative;
-  transition: all 0.3s ease-in-out;
-  border: solid 1px #A6A6A6;
-  background: transparent;
-  color: var(--text-white);
-  padding: 0.5rem 1.1rem;
-  font-size: 0.78rem;
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border-radius: 0px;
-  cursor: pointer;
-  z-index: 1;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  outline: none;
+.ringly-card:hover {
+  border-color: var(--border-medium);
 }
 
-.nav-link-btn::before {
-  content: "";
-  position: absolute;
-  background: #A6A6A6;
-  width: 0;
-  height: 100%;
-  left: 0;
-  top: 0;
-  z-index: -1;
-  transition: width 0.3s ease-in-out;
-}
-
-.nav-link-btn:hover {
-  color: #000000;
-  border-color: #A6A6A6;
-  z-index: 1;
-}
-
-.nav-link-btn:hover::before {
-  width: 100%;
-}
-
-.nav-link-btn.active {
-  background: #A6A6A6;
-  color: #000000;
-  border-color: #A6A6A6;
-}
-
-/* Functional Buttons - Sharp & Purposeful */
+/* Buttons */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--accent-cream);
-  color: var(--bg-dark);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 1rem 2rem;
-  border-radius: var(--radius-button);
-  border: none;
+  gap: 0.5rem;
+  background-color: var(--text-primary);
+  color: var(--text-inverse);
+  font-family: var(--font-sans);
+  font-size: 0.93rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.75rem 1.35rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.15s ease;
   text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+  white-space: nowrap;
 }
 
 .btn-primary:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
+  background-color: #2D2D2D;
+}
+
+.btn-primary:active {
+  transform: scale(0.985);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-coral {
+  background-color: var(--accent-coral);
+  color: var(--text-inverse);
+}
+
+.btn-coral:hover {
+  background-color: var(--accent-coral-hover);
 }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
-  color: var(--text-white);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 0.95rem 1.8rem;
-  border-radius: var(--radius-button);
+  gap: 0.5rem;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.93rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.75rem 1.35rem;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
   cursor: pointer;
-  transition: all 0.15s ease;
   text-decoration: none;
+  box-shadow: var(--shadow-subtle);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
 }
 
 .btn-secondary:hover {
-  border-color: var(--accent-cream);
-  color: var(--accent-cream);
+  background-color: var(--bg-surface-hover);
+  border-color: var(--border-medium);
 }
 
-/* Uiverse Animated Primary Tactical Button (Ringly Theme) */
-.button-borders {
-  position: relative;
-  display: inline-block;
-  width: fit-content;
-  height: fit-content;
+.btn-secondary:active {
+  transform: scale(0.985);
 }
 
-.button-borders:before {
-  content: "";
-  position: absolute;
-  width: calc(100% + 0.6em);
-  height: 50%;
-  left: -0.3em;
-  top: -0.3em;
-  border: 1px solid var(--accent-cream, #F5E6C8);
-  border-bottom: 0px;
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.button-borders:after {
-  content: "";
-  position: absolute;
-  width: calc(100% + 0.6em);
-  height: 50%;
-  left: -0.3em;
-  bottom: -0.3em;
-  border: 1px solid var(--accent-cream, #F5E6C8);
-  border-top: 0px;
-  opacity: 0.7;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.primary-button {
-  font-family: var(--font-display, 'Space Grotesk', sans-serif);
-  color: var(--text-white, #FFFFFF);
-  cursor: pointer;
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: 0.08rem;
-  text-transform: uppercase;
-  border: 1.5px solid var(--accent-cream, #F5E6C8);
-  padding: 1rem 4.5rem;
-  min-width: 260px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 531.28 200'%3E%3Cdefs%3E%3Cstyle%3E .shape %7B fill: %23F5E6C8; %7D %3C/style%3E%3C/defs%3E%3Cg id='Layer_2' data-name='Layer 2'%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Cpolygon class='shape' points='415.81 200 0 200 115.47 0 531.28 0 415.81 200' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-color: var(--bg-dark, #0F212A);
-  background-size: 200%;
-  background-position: 200%;
-  background-repeat: no-repeat;
-  transition: 0.35s ease-in-out;
-  transition-property: background-position, border, color;
-  position: relative;
-  z-index: 1;
-  border-radius: 0px;
-  outline: none;
+.btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.primary-button:hover {
-  border: 1.5px solid var(--accent-cream, #F5E6C8);
-  color: var(--bg-dark, #0F212A);
-  background-position: 40%;
-}
-
-.ringly-auth-btn {
-  font-family: var(--font-mono, 'Space Mono', monospace);
-  color: var(--text-white, #FFFFFF);
-  cursor: pointer;
+  gap: 0.4rem;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
   font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1.5px solid var(--accent-cream, #F5E6C8);
-  padding: 1rem 2rem;
-  width: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 531.28 200'%3E%3Cdefs%3E%3Cstyle%3E .shape %7B fill: %23F5E6C8; %7D %3C/style%3E%3C/defs%3E%3Cg id='Layer_2' data-name='Layer 2'%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Cpolygon class='shape' points='415.81 200 0 200 115.47 0 531.28 0 415.81 200' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-color: var(--bg-dark, #0F212A);
-  background-size: 200%;
-  background-position: 200%;
-  background-repeat: no-repeat;
-  transition: 0.3s ease-in-out;
-  transition-property: background-position, border, color;
-  position: relative;
-  border-radius: 0px;
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ringly-auth-btn:hover {
-  border: 1.5px solid var(--accent-cream, #F5E6C8);
-  color: var(--bg-dark, #0F212A);
-  background-position: 40%;
-}
-
-
-.primary-button:before {
-  content: "";
-  position: absolute;
-  background-color: var(--bg-dark, #0F212A);
-  width: 0.35rem;
-  height: 0.35rem;
-  top: -1px;
-  left: -1px;
-  transition: background-color 0.15s ease-in-out;
-}
-
-.primary-button:hover:before {
-  background-color: var(--accent-cream, #F5E6C8);
-}
-
-.primary-button:after {
-  content: "";
-  position: absolute;
-  background-color: var(--accent-cream, #F5E6C8);
-  width: 0.4rem;
-  height: 0.4rem;
-  bottom: -1px;
-  right: -1px;
-  transition: background-color 0.15s ease-in-out;
-}
-
-.primary-button:hover:after {
-  background-color: var(--bg-dark, #0F212A);
-}
-
-/* Scratch-Built Custom Checkbox */
-.custom-checkbox-container {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: none;
   cursor: pointer;
-  user-select: none;
+  text-decoration: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
-.custom-checkbox {
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid var(--border-subtle);
-  border-radius: 0px;
-  background-color: var(--bg-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2px;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
+.btn-ghost:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-subtle);
 }
 
-.custom-checkbox-container:hover .custom-checkbox {
-  border-color: var(--accent-cream);
+/* Input Fields */
+.ringly-input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.custom-checkbox.checked {
-  background-color: var(--accent-cream);
-  border-color: var(--accent-cream);
+.ringly-input::placeholder {
+  color: var(--text-tertiary);
 }
 
-.custom-checkbox-icon {
-  width: 12px;
-  height: 12px;
-  stroke: var(--bg-dark);
-  stroke-width: 3;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.custom-checkbox.checked .custom-checkbox-icon {
-  opacity: 1;
+.ringly-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 1px var(--border-focus);
 }
 
 /* Status Badges */
 .badge-status {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.custom-pill-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem 1rem;
-  background-color: var(--bg-dark);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.custom-pill-option:hover {
-  border-color: var(--accent-cream);
-}
-
-.custom-pill-option.active {
-  border-color: var(--accent-cream);
-  background-color: var(--bg-card);
+  gap: 0.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  line-height: 1.2;
 }
 
 .badge-scheduled {
-  background: rgba(245, 230, 200, 0.12);
-  color: var(--accent-cream);
-  border: 1px solid rgba(245, 230, 200, 0.25);
+  background-color: var(--accent-coral-subtle);
+  color: var(--accent-coral);
 }
 
 .badge-called {
-  background: rgba(46, 204, 113, 0.12);
+  background-color: var(--accent-green-subtle);
   color: var(--accent-green);
-  border: 1px solid rgba(46, 204, 113, 0.25);
 }
 
 .badge-missed {
-  background: rgba(231, 76, 60, 0.12);
-  color: var(--accent-red);
-  border: 1px solid rgba(231, 76, 60, 0.25);
+  background-color: #FDF2F2;
+  color: #DC2626;
 }
 
 .badge-inventory {
-  background: rgba(155, 89, 182, 0.12);
-  color: #9B59B6;
-  border: 1px solid rgba(155, 89, 182, 0.25);
+  background-color: var(--accent-amber-subtle);
+  color: var(--accent-amber);
 }
 
-/* Ringly Operational Inputs & Controls */
-.ringly-input {
-  width: 100%;
-  background-color: var(--bg-dark);
-  border: 1px solid var(--border-subtle);
-  border-radius: 0px;
-  color: var(--text-white);
-  font-family: var(--font-body);
-  font-size: 0.92rem;
-  padding: 0.85rem 1rem;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.ringly-input:focus {
-  border-color: var(--accent-cream);
-  box-shadow: none;
-}
-
-.ringly-input::placeholder {
-  color: var(--text-muted);
-  opacity: 0.7;
-}
-
-/* Section Spacing & View Transitions */
-.section-spacing {
-  padding-top: 4.5rem;
-  padding-bottom: 4.5rem;
-}
-
-.section-spacing-lg {
-  padding-top: 6.5rem;
-  padding-bottom: 6.5rem;
-}
-
+/* Motion / View Transition */
 .view-fade-enter {
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -466,321 +317,10 @@ html, body {
   }
 }
 
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
-  border-radius: 0px;
-}
-
-/* ─── Subscribe Button (UIverse btn-96) — Ringly Themed ─── */
-.btn-96,
-.btn-96 *,
-.btn-96 :after,
-.btn-96 :before,
-.btn-96:after,
-.btn-96:before {
-  border: 0 solid;
-  box-sizing: border-box;
-}
-
-.btn-96 {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-appearance: button;
-  background-color: var(--bg-dark);
-  background-image: none;
-  color: var(--text-white);
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-size: 100%;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-}
-
-.btn-96:disabled {
-  cursor: default;
-}
-
-.btn-96:-moz-focusring {
-  outline: auto;
-}
-
-.btn-96 svg {
-  display: block;
-  vertical-align: middle;
-}
-
-.btn-96 [hidden] {
-  display: none;
-}
-
-.btn-96 {
-  box-sizing: border-box;
-  display: block;
-  font-weight: 900;
-  -webkit-mask-image: none;
-  padding: 1.4rem 5rem;
-  perspective: 800px;
-  position: relative;
-  text-transform: uppercase;
-  transform-style: preserve-3d;
-  letter-spacing: 0.12em;
-}
-
-.btn-96 span {
-  background: var(--accent-cream);
-  color: var(--bg-dark);
-  display: grid;
-  inset: 0;
-  place-items: center;
-  position: absolute;
-  transform: rotateX(0deg);
-  transform-origin: top center;
-  transition: 0.2s;
-  font-family: var(--font-display);
-  font-weight: 900;
-  letter-spacing: 0.12em;
-}
-
-.btn-96:hover span {
-  transform: rotateX(35deg);
-}
-
-.btn-96:after,
-.btn-96:before {
-  background: var(--bg-dark-secondary);
-  content: "";
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  transform: rotateX(0deg);
-  width: 100%;
-  z-index: -1;
-}
-
-.btn-96:after {
-  background: var(--border-subtle);
-  width: 0;
-}
-
-.btn-96:hover:after {
-  animation: progress-bar 1.2s;
-}
-
-@keyframes progress-bar {
-  0%   { opacity: 1; width: 0; }
-  10%  { opacity: 1; width: 15%; }
-  25%  { opacity: 1; width: 25%; }
-  40%  { opacity: 1; width: 35%; }
-  55%  { opacity: 1; width: 75%; }
-  60%  { opacity: 1; width: 100%; }
-  to   { opacity: 0; width: 100%; }
-}
-
-/* Mobile Responsive Media Queries (<= 768px & <= 428px) */
-@media (max-width: 768px) {
-  .container-wide {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-
-  input, button, select, textarea, .ringly-input, .primary-button, .btn-secondary {
-    min-height: 44px;
-    touch-action: manipulation;
-  }
-
-  body, #root {
-    overflow-x: hidden;
-    width: 100%;
-  }
-
-  .primary-button {
-    min-width: unset;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    font-size: 0.92rem;
-  }
-
-  .button-borders {
-    width: 100%;
-  }
-
-  .button-borders:before,
-  .button-borders:after {
-    width: calc(100% + 0.4em);
-    left: -0.2em;
-  }
-
-  .btn-96 {
-    padding: 1.2rem 2.5rem;
-    font-size: 90%;
-    width: 100%;
-  }
-
-  .ringly-card {
-    padding: 1.5rem 1.25rem;
-  }
-
-  .ringly-auth-btn {
-    padding: 0.85rem 1rem;
-    font-size: 0.82rem;
-  }
-
-  .section-spacing {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
-
-  .section-spacing-lg {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
-
-@media (max-width: 375px) {
-  .btn-96 {
-    padding: 1rem 1.5rem;
-    font-size: 85%;
-  }
-
-  .primary-button {
-    padding: 0.85rem 1rem;
-    font-size: 0.85rem;
-  }
-}
-
-/* From Uiverse.io by D3OXY — Ringly Auth styling */
-.form {
-  --background: #162C37;
-  --input-focus: #F5E6C8;
-  --font-color: #FFFFFF;
-  --font-color-sub: #8EA8B6;
-  --bg-color: #10212A;
-  --main-color: #F5E6C8;
-  padding: 24px;
-  background: var(--background);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 20px;
-  border-radius: 5px;
-  border: 2px solid var(--main-color);
-  box-shadow: 4px 4px var(--main-color);
-  width: 100%;
-}
-
-.form > p {
-  font-family: var(--font-display, 'Space Grotesk', sans-serif);
-  color: var(--font-color);
-  font-weight: 700;
-  font-size: 20px;
-  margin-bottom: 5px;
-  display: flex;
-  flex-direction: column;
-}
-
-.form > p > span {
-  font-family: var(--font-mono, 'Space Mono', monospace);
-  color: var(--font-color-sub);
-  font-weight: 600;
-  font-size: 15px;
-}
-
-.separator {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.separator > div {
-  flex: 1;
-  height: 2px;
-  border-radius: 5px;
-  background-color: var(--font-color-sub);
-}
-
-.separator > span {
-  color: var(--font-color-sub);
-  font-family: var(--font-mono, 'Space Mono', monospace);
-  font-weight: 600;
-  font-size: 0.75rem;
-}
-
-.oauthButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  padding: 0 15px;
-  width: 100%;
-  height: 44px;
-  border-radius: 5px;
-  border: 2px solid var(--main-color);
-  background-color: var(--bg-color);
-  box-shadow: 4px 4px var(--main-color);
-  font-size: 15px;
-  font-weight: 700;
-  font-family: var(--font-mono, 'Space Mono', monospace);
-  color: var(--font-color);
-  cursor: pointer;
-  transition: all 250ms;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.oauthButton::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  background-color: var(--main-color);
-  z-index: -1;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  transition: all 250ms;
-}
-
-.oauthButton:hover {
-  color: var(--bg-color);
-}
-
-.oauthButton:hover::before {
-  width: 100%;
-}
-
-.form input {
-  width: 100%;
-  height: 44px;
-  border-radius: 5px;
-  border: 2px solid var(--main-color);
-  background-color: var(--bg-color);
-  box-shadow: 4px 4px var(--main-color);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--font-color);
-  padding: 5px 12px;
-  outline: none;
-}
-
-.form input:focus {
-  border-color: var(--input-focus);
-}
-
-.icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-

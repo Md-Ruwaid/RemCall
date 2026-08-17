@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 
-/**
- * ScheduleCallModal — Schedule a new human operator call modal.
- * 
- * Clean overlay modal with title, datetime, notes inputs.
- * Handles: idle → submitting → success states.
- * Prevents duplicate submissions.
- */
 export default function ScheduleCallModal({ isOpen, onClose }) {
   const { addReminder } = useApp();
 
@@ -24,17 +17,13 @@ export default function ScheduleCallModal({ isOpen, onClose }) {
     if (!title.trim() || !dateTime.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
-
-    // Parse the datetime-local input into an ISO string
     const callTime = new Date(dateTime);
 
-    // Simulate async (mock — backend integration ready)
     setTimeout(() => {
       addReminder(title, callTime, notes);
       setIsSubmitting(false);
       setShowSuccess(true);
 
-      // Auto-close after success confirmation
       setTimeout(() => {
         resetForm();
         onClose();
@@ -55,7 +44,6 @@ export default function ScheduleCallModal({ isOpen, onClose }) {
     onClose();
   };
 
-  // Get min datetime (now, rounded up to next 15 minutes)
   const getMinDateTime = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() + 15);
@@ -81,68 +69,61 @@ export default function ScheduleCallModal({ isOpen, onClose }) {
         </button>
 
         {showSuccess ? (
-          /* ─── Success State ─── */
           <div style={{ textAlign: 'center', padding: '2rem 0' }}>
             <div style={{
               fontSize: '2.5rem',
-              marginBottom: '1rem',
+              marginBottom: '0.75rem',
               color: 'var(--accent-green)'
             }}>
               ✓
             </div>
-            <div style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.3rem',
-              fontWeight: 800,
-              color: 'var(--text-white)',
-              textTransform: 'uppercase'
+            <h2 style={{
+              fontSize: '1.4rem',
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              marginBottom: '0.5rem'
             }}>
-              CALL SCHEDULED
-            </div>
-            <div style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.78rem',
-              color: 'var(--text-muted)',
-              marginTop: '0.5rem'
+              Call scheduled
+            </h2>
+            <p style={{
+              fontSize: '0.9rem',
+              color: 'var(--text-secondary)'
             }}>
-              YOUR HUMAN OPERATOR WILL RING AT THE SCHEDULED TIME.
-            </div>
+              Your human operator will dial your phone at the scheduled time.
+            </p>
           </div>
         ) : (
-          /* ─── Form ─── */
           <>
-            <div className="font-mono" style={{
-              fontSize: '0.78rem',
-              color: 'var(--text-muted)',
-              fontWeight: 700,
-              letterSpacing: '0.08em'
+            <div style={{
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              color: 'var(--text-tertiary)',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              marginBottom: '0.35rem'
             }}>
-              [ SCHEDULE OPERATOR CALL ]
+              New Reminder
             </div>
 
             <h2 style={{
-              fontFamily: 'var(--font-display)',
               fontSize: '1.5rem',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              color: 'var(--text-white)',
-              marginTop: '0.25rem',
+              fontWeight: 700,
+              color: 'var(--text-primary)',
               marginBottom: '1.5rem'
             }}>
-              NEW REMINDER
+              Schedule operator call
             </h2>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
-                <label className="font-mono" style={{
+                <label style={{
                   display: 'block',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  color: 'var(--text-muted)',
-                  marginBottom: '0.4rem',
-                  textTransform: 'uppercase'
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  marginBottom: '0.35rem'
                 }}>
-                  CALL TITLE / TASK
+                  What should we call you about?
                 </label>
                 <input
                   type="text"
@@ -156,15 +137,14 @@ export default function ScheduleCallModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <label className="font-mono" style={{
+                <label style={{
                   display: 'block',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  color: 'var(--text-muted)',
-                  marginBottom: '0.4rem',
-                  textTransform: 'uppercase'
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  marginBottom: '0.35rem'
                 }}>
-                  CALL DATE & TIME
+                  Date & Time
                 </label>
                 <input
                   type="datetime-local"
@@ -174,20 +154,18 @@ export default function ScheduleCallModal({ isOpen, onClose }) {
                   min={getMinDateTime()}
                   required
                   disabled={isSubmitting}
-                  style={{ colorScheme: 'dark' }}
                 />
               </div>
 
               <div>
-                <label className="font-mono" style={{
+                <label style={{
                   display: 'block',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  color: 'var(--text-muted)',
-                  marginBottom: '0.4rem',
-                  textTransform: 'uppercase'
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  marginBottom: '0.35rem'
                 }}>
-                  OPERATOR INSTRUCTIONS (OPTIONAL)
+                  Operator Instructions (Optional)
                 </label>
                 <textarea
                   className="ringly-input"
@@ -202,18 +180,16 @@ export default function ScheduleCallModal({ isOpen, onClose }) {
 
               <button
                 type="submit"
-                className="btn-primary"
+                className="btn-primary btn-coral"
                 disabled={isSubmitting}
                 style={{
                   width: '100%',
-                  padding: '1rem',
+                  padding: '0.85rem',
                   fontSize: '0.95rem',
-                  marginTop: '0.5rem',
-                  opacity: isSubmitting ? 0.7 : 1,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                  marginTop: '0.5rem'
                 }}
               >
-                {isSubmitting ? 'SCHEDULING…' : 'SCHEDULE CALL'}
+                {isSubmitting ? 'Scheduling…' : 'Schedule Call'}
               </button>
             </form>
           </>

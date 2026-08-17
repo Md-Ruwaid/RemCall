@@ -3,134 +3,128 @@ import { useApp } from '../context/AppContext';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 export default function AboutView() {
-  const { setActiveView } = useApp();
+  const { setActiveView, setIsSubscribeModalOpen, isAuthenticated, setAuthModalMode } = useApp();
   const isMobile = useIsMobile(768);
 
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      setActiveView('dashboard');
+    } else {
+      setAuthModalMode('subscribe');
+      setIsSubscribeModalOpen(true);
+    }
+  };
+
   return (
-    <div
-      className="view-fade-enter"
-      style={{
-        minHeight: '100vh',
-        backgroundColor: 'var(--bg-dark)',
-        color: 'var(--text-white)',
-        paddingTop: isMobile ? '5.5rem' : '6rem',
-        paddingBottom: '4rem',
-        paddingLeft: isMobile ? '1rem' : '2rem',
-        paddingRight: isMobile ? '1rem' : '2rem'
-      }}
-    >
-      <div className="container-wide" style={{ maxWidth: '960px', margin: '0 auto' }}>
+    <div className="view-fade-enter" style={{
+      paddingTop: isMobile ? '3rem' : '4.5rem',
+      paddingBottom: '5rem'
+    }}>
+      <div className="container-narrow">
         
-        {/* Header Tag */}
-        <div className="font-mono" style={{
-          fontSize: '0.8rem',
-          fontWeight: 700,
-          color: 'var(--accent-cream)',
+        {/* Section Label */}
+        <div style={{
+          fontSize: '0.82rem',
+          fontWeight: 600,
+          color: 'var(--accent-coral)',
           letterSpacing: '0.08em',
-          marginBottom: '1.25rem'
+          textTransform: 'uppercase',
+          marginBottom: '1rem'
         }}>
-          [ ABOUT RINGLY · HUMAN TELEPHONY OPERATORS ]
+          About Ringly
         </div>
 
         <h1 style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(1.8rem, 5vw, 3.8rem)',
-          fontWeight: 900,
-          letterSpacing: '-0.02em',
+          fontSize: 'clamp(2.25rem, 4.5vw, 3.5rem)',
+          fontWeight: 700,
+          letterSpacing: '-0.03em',
           lineHeight: 1.1,
-          textTransform: 'uppercase',
+          color: 'var(--text-primary)',
           marginBottom: '2rem'
         }}>
-          THE ANTI-APP REMINDER SERVICE
+          The anti-app reminder service.
         </h1>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: isMobile ? '1.5rem' : '2.5rem',
+        <p style={{
+          fontSize: '1.2rem',
+          color: 'var(--text-secondary)',
+          lineHeight: 1.6,
           marginBottom: '3rem'
         }}>
-          {/* Column 1: Mission */}
-          <div className="ringly-card" style={{ padding: isMobile ? '1.5rem' : '2rem', borderRadius: '0px' }}>
-            <h2 style={{
-              fontSize: '1.1rem',
-              fontWeight: 800,
-              color: 'var(--accent-cream)',
+          Push notifications are swiped away in milliseconds without thought. We replace silent software alerts with real human telephone operators who stay on the line until you complete what you planned.
+        </p>
+
+        {/* Narrative Cards */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: '1.5rem',
+          marginBottom: '3.5rem'
+        }}>
+          <div className="ringly-card" style={{ padding: '2rem' }}>
+            <div style={{
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: 'var(--text-tertiary)',
+              letterSpacing: '0.05em',
               textTransform: 'uppercase',
-              marginBottom: '1rem'
+              marginBottom: '0.75rem'
             }}>
-              01. WHY WE BUILT THIS
+              01 · Why we built this
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
+              Notification Fatigue
             </h2>
-            <p style={{
-              fontSize: '0.92rem',
-              color: 'var(--text-white)',
-              lineHeight: 1.6,
-              margin: 0
-            }}>
-              Push notifications are broken. We swipe them away in milliseconds without thinking.
-              Ringly replaces silent app alerts with real human telephone callers who stay on the line
-              until you actually complete what you set out to do.
+            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              Modern smartphones produce hundreds of low-priority pings every day. Important deadlines get lost in the noise. A ringing phone call breaks through passive procrastination.
             </p>
           </div>
 
-          {/* Column 2: Operators */}
-          <div className="ringly-card" style={{ padding: isMobile ? '1.5rem' : '2rem', borderRadius: '0px' }}>
-            <h2 style={{
-              fontSize: '1.1rem',
-              fontWeight: 800,
-              color: 'var(--accent-cream)',
+          <div className="ringly-card" style={{ padding: '2rem' }}>
+            <div style={{
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: 'var(--text-tertiary)',
+              letterSpacing: '0.05em',
               textTransform: 'uppercase',
-              marginBottom: '1rem'
+              marginBottom: '0.75rem'
             }}>
-              02. REAL HUMAN OPERATORS
+              02 · Real Human Operators
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
+              Direct Telephony Lines
             </h2>
-            <p style={{
-              fontSize: '0.92rem',
-              color: 'var(--text-white)',
-              lineHeight: 1.6,
-              margin: 0
-            }}>
-              Every call is placed by trained human operators operating direct telephony circuits.
-              No pre-recorded robocalls. No AI synthetic voices. Pure human-to-human accountability.
+            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              Every reminder call is dialed by a trained human operator directly to your voice line. No robocalls, no synthetic bots. Genuine human-to-human accountability.
             </p>
           </div>
         </div>
 
-        {/* CTA Banner */}
+        {/* Action Row */}
         <div style={{
-          borderTop: '1px solid var(--border-subtle)',
-          paddingTop: '2.5rem',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: isMobile ? 'stretch' : 'center',
-          flexDirection: isMobile ? 'column' : 'row',
-          gap: '1.5rem'
+          alignItems: 'center',
+          gap: '1rem',
+          paddingTop: '2rem',
+          borderTop: '1px solid var(--border-subtle)',
+          flexWrap: 'wrap'
         }}>
-          <div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, textTransform: 'uppercase' }}>
-              READY TO END PROCRASTINATION?
-            </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-              Explore how human telephony reminder calls work step-by-step.
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '1rem', width: isMobile ? '100%' : 'auto' }}>
-            <button
-              onClick={() => setActiveView('how-it-works')}
-              className="primary-button"
-              style={{ padding: '0.85rem 2rem', minHeight: '44px', width: isMobile ? '100%' : 'auto' }}
-            >
-              HOW IT WORKS
-            </button>
-            <button
-              onClick={() => setActiveView('home')}
-              className="btn-secondary"
-              style={{ borderRadius: '0px', minHeight: '44px', width: isMobile ? '100%' : 'auto' }}
-            >
-              RETURN HOME
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn-primary btn-coral"
+            style={{ padding: '0.85rem 1.75rem', fontSize: '1rem' }}
+            onClick={handleGetStarted}
+          >
+            Get started
+          </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            style={{ padding: '0.85rem 1.5rem', fontSize: '1rem' }}
+            onClick={() => setActiveView('home')}
+          >
+            Return to home
+          </button>
         </div>
 
       </div>

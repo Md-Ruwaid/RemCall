@@ -1,98 +1,126 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { StickyScroll } from './StickyScroll';
+import React from 'react';
+import { useApp } from '../context/AppContext';
 import { useIsMobile } from '../hooks/useIsMobile';
 
-/**
- * HowItWorksView — 100vh locked on desktop, full-page background animates on scroll.
- */
-
-// Background colors that sweep the entire page per card
-const pageBackgrounds = [
-  "#10212A",  // card 1 — --bg-dark
-  "#152534",  // card 2 — deep navy
-  "#1a1220",  // card 3 — near-black with purple undertone
-  "#12221A",  // card 4 — deep forest-dark
-];
-
 export default function HowItWorksView() {
-  const [activeCard, setActiveCard] = useState(0);
+  const { setActiveView, setIsSubscribeModalOpen, isAuthenticated, setAuthModalMode } = useApp();
   const isMobile = useIsMobile(768);
 
-  const content = [
-    {
-      title: "UNDER PRESSURE, THINGS SLIP.",
-      description: "WORK STRESS DOESN'T LEAVE ROOM FOR ONE MORE THING TO REMEMBER.",
-      contentTitle: "UNDER PRESSURE",
-      content: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 01 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>UNDER PRESSURE</span>
-        </div>
-      ),
-    },
-    {
-      title: "NOTIFICATIONS GET IGNORED. CALLS DON'T.",
-      description: "A BUZZ IS BACKGROUND NOISE — A VOICE ISN'T.",
-      contentTitle: "DIRECT VOICE CALL",
-      content: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 02 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DIRECT VOICE CALL</span>
-        </div>
-      ),
-    },
-    {
-      title: "IN A DISTRACTED WORLD,",
-      description: "DEADLINES GET MISSED.",
-      contentTitle: "DEADLINE AWARENESS",
-      content: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 03 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>DEADLINE AWARENESS</span>
-        </div>
-      ),
-    },
-    {
-      title: "A CALL YOU'RE ACCOUNTABLE TO",
-      description: "KEEPS YOU AWARE — NOT JUST ALERTED.",
-      contentTitle: "HUMAN ACCOUNTABILITY",
-      content: (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textAlign: 'center', width: '100%', height: '100%' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>[ STEP 04 ]</span>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text-white)', textTransform: 'uppercase' }}>HUMAN ACCOUNTABILITY</span>
-        </div>
-      ),
-    },
-  ];
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      setActiveView('dashboard');
+    } else {
+      setAuthModalMode('subscribe');
+      setIsSubscribeModalOpen(true);
+    }
+  };
 
   return (
-    // Full page background animates here — covers the entire viewport
-    <motion.div
-      className="view-fade-enter"
-      animate={{
-        backgroundColor: pageBackgrounds[activeCard % pageBackgrounds.length],
-      }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      style={{
-        height: isMobile ? 'auto' : '100vh',
-        minHeight: '100vh',
-        overflow: isMobile ? 'visible' : 'hidden',
-        color: 'var(--text-white)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: isMobile ? '5.5rem 1rem 1rem 1rem' : '6rem 2rem 2rem 2rem',
-        boxSizing: 'border-box',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: '1080px', height: '100%' }}>
-        <StickyScroll
-          content={content}
-          onActiveCardChange={setActiveCard}
-        />
+    <div className="view-fade-enter" style={{
+      paddingTop: isMobile ? '3rem' : '4.5rem',
+      paddingBottom: '5rem'
+    }}>
+      <div className="container-narrow">
+        
+        <div style={{
+          fontSize: '0.82rem',
+          fontWeight: 600,
+          color: 'var(--accent-coral)',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          marginBottom: '1rem'
+        }}>
+          Protocol & Process
+        </div>
+
+        <h1 style={{
+          fontSize: 'clamp(2.25rem, 4.5vw, 3.5rem)',
+          fontWeight: 700,
+          letterSpacing: '-0.03em',
+          lineHeight: 1.1,
+          color: 'var(--text-primary)',
+          marginBottom: '2rem'
+        }}>
+          How Ringly works.
+        </h1>
+
+        <p style={{
+          fontSize: '1.2rem',
+          color: 'var(--text-secondary)',
+          lineHeight: 1.6,
+          marginBottom: '3rem'
+        }}>
+          A simple three-step workflow designed to protect your attention from distraction and missed deadlines.
+        </p>
+
+        {/* Step-by-Step Cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3.5rem' }}>
+          {[
+            {
+              step: '01',
+              title: 'Schedule your moment',
+              desc: 'Select the date and exact time you need to be prompted. Enter the specific task or verification criteria for the operator.'
+            },
+            {
+              step: '02',
+              title: 'Direct human phone call',
+              desc: 'At the scheduled time, our live operator places a direct telephone call to your verified cellular phone line. No app or Wi-Fi needed.'
+            },
+            {
+              step: '03',
+              title: 'Verified task completion',
+              desc: 'The operator speaks with you directly, confirms your progress, and logs the outcome in your personal dashboard archive.'
+            }
+          ].map((item, idx) => (
+            <div key={idx} className="ringly-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+              <div className="font-mono" style={{
+                fontSize: '1.15rem',
+                fontWeight: 700,
+                color: 'var(--accent-coral)',
+                minWidth: '32px'
+              }}>
+                {item.step}
+              </div>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                  {item.title}
+                </h2>
+                <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                  {item.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Action Row */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          paddingTop: '2rem',
+          borderTop: '1px solid var(--border-subtle)',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            type="button"
+            className="btn-primary btn-coral"
+            style={{ padding: '0.85rem 1.75rem', fontSize: '1rem' }}
+            onClick={handleGetStarted}
+          >
+            Get started
+          </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            style={{ padding: '0.85rem 1.5rem', fontSize: '1rem' }}
+            onClick={() => setActiveView('home')}
+          >
+            Return to home
+          </button>
+        </div>
+
       </div>
-    </motion.div>
+    </div>
   );
 }

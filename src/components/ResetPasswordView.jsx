@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export default function ResetPasswordView() {
   const { updatePassword, setActiveView, authError, setAuthError } = useApp();
+  const isMobile = useIsMobile(768);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localError, setLocalError] = useState(null);
@@ -39,99 +41,101 @@ export default function ResetPasswordView() {
   };
 
   return (
-    <div
-      className="view-fade-enter"
-      style={{
-        minHeight: '100vh',
-        backgroundColor: 'var(--bg-dark, #10212A)',
-        color: 'var(--text-white)',
-        paddingTop: '6rem',
-        paddingBottom: '4rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-    >
-      <div className="container-wide" style={{ maxWidth: '520px', width: '100%', margin: '0 auto', padding: '0 1.5rem' }}>
-        <div
-          style={{
-            background: 'var(--bg-card, #1C3644)',
-            border: '1.5px solid var(--border-subtle, #3A5C6E)',
-            borderRadius: '0px',
-            padding: '2.5rem'
-          }}
-        >
-          <div className="font-mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.08em' }}>
-            [ RECOVERY PROTOCOL ]
-          </div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-white)', marginTop: '0.25rem', marginBottom: '1.5rem' }}>
-            SET NEW PASSWORD
-          </h2>
-
-          {(localError || authError) && (
-            <div
-              className="font-mono"
-              style={{
-                background: 'rgba(231, 76, 60, 0.15)',
-                border: '1px solid #E74C3C',
-                color: '#E74C3C',
-                padding: '0.75rem 1rem',
-                fontSize: '0.78rem',
-                marginBottom: '1.25rem'
-              }}
-            >
-              ⚠️ {localError || authError}
-            </div>
-          )}
-
-          {success ? (
-            <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✓</div>
-              <p className="font-mono" style={{ color: 'var(--accent-cream)', fontSize: '0.95rem' }}>
-                PASSWORD UPDATED SUCCESSFULLY! REDIRECTING TO DASHBOARD...
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div>
-                <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
-                  NEW PASSWORD
-                </label>
-                <input
-                  type="password"
-                  className="ringly-input"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="font-mono" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
-                  CONFIRM NEW PASSWORD
-                </label>
-                <input
-                  type="password"
-                  className="ringly-input"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="ringly-auth-btn"
-                style={{ marginTop: '0.5rem', padding: '1rem' }}
-              >
-                <span>{isSubmitting ? 'UPDATING PASSWORD...' : 'UPDATE PASSWORD →'}</span>
-              </button>
-            </form>
-          )}
+    <div className="view-fade-enter" style={{
+      minHeight: 'calc(100vh - 64px)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: isMobile ? '2rem 1rem' : '3.5rem 1.5rem',
+      backgroundColor: 'var(--bg-base)'
+    }}>
+      <div className="ringly-card" style={{
+        maxWidth: '440px',
+        width: '100%',
+        padding: isMobile ? '1.75rem 1.25rem' : '2.5rem',
+        boxShadow: 'var(--shadow-card)'
+      }}>
+        <div style={{
+          fontSize: '0.82rem',
+          fontWeight: 600,
+          color: 'var(--text-secondary)',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          marginBottom: '0.5rem'
+        }}>
+          Account Security
         </div>
+
+        <h1 style={{
+          fontSize: '1.65rem',
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          marginBottom: '1.5rem'
+        }}>
+          Set new password
+        </h1>
+
+        {(localError || authError) && (
+          <div style={{
+            backgroundColor: '#FDF2F2',
+            border: '1px solid #FCA5A5',
+            color: '#DC2626',
+            padding: '0.75rem 1rem',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '0.85rem',
+            marginBottom: '1.25rem'
+          }}>
+            {localError || authError}
+          </div>
+        )}
+
+        {success ? (
+          <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--accent-green)' }}>✓</div>
+            <p style={{ color: 'var(--text-primary)', fontSize: '0.95rem', fontWeight: 600 }}>
+              Password updated successfully! Redirecting…
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                New Password
+              </label>
+              <input
+                type="password"
+                className="ringly-input"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                className="ringly-input"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-primary btn-coral"
+              style={{ marginTop: '0.5rem', padding: '0.85rem' }}
+            >
+              {isSubmitting ? 'Updating password…' : 'Update Password'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

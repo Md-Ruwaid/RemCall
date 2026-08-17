@@ -4,16 +4,6 @@ import NextCallHero from './NextCallHero';
 import WeeklyAllowance from './WeeklyAllowance';
 import SubscriptionSummary from './SubscriptionSummary';
 
-/**
- * OverviewView — Dashboard V1.1 Refined Overview
- * 
- * Fits naturally into the initial viewport on normal desktop screens.
- * Answers the 4 core questions in under 2 seconds:
- *   1. What is my next call? (NextCallHero)
- *   2. What calls do I have today? (Today allowance & schedule card)
- *   3. How much of my allowance have I used? (Allowance card)
- *   4. What can I do next? (+ SCHEDULE A CALL primary action)
- */
 export default function OverviewView({
   user,
   nextCall,
@@ -25,7 +15,7 @@ export default function OverviewView({
 }) {
   return (
     <div className="dashboard-overview-container view-fade-enter">
-      {/* 1. Header with Greeting and Real-time Awareness */}
+      {/* 1. Header Greeting */}
       <DashboardHeader user={user} nextCall={nextCall} />
 
       {/* 2. Primary Hero: Next Call */}
@@ -34,7 +24,7 @@ export default function OverviewView({
         onViewCall={() => onNavigateTab('calls')}
       />
 
-      {/* 3. Secondary Row: Today / Allowance + Active Plan */}
+      {/* 3. Secondary Row: Allowance + Active Plan */}
       <div className="dashboard-stats-row">
         <WeeklyAllowance
           allowance={allowance}
@@ -47,15 +37,14 @@ export default function OverviewView({
         />
       </div>
 
-      {/* 4. Primary CTA: Schedule a Call */}
+      {/* 4. Primary Action: Schedule a Call */}
       <div className="dashboard-overview-cta-row">
         <button
           type="button"
-          className="dashboard-primary-schedule-btn font-display"
+          className="dashboard-primary-schedule-btn"
           onClick={onOpenSchedule}
         >
-          <span className="btn-plus-icon">+</span>
-          SCHEDULE A CALL
+          <span>+ Schedule a call</span>
         </button>
       </div>
     </div>

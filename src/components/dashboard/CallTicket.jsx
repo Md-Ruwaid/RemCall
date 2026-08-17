@@ -2,12 +2,6 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatCallTime, formatCallDate, getRelativeTime, isFuture } from '../../utils/dateHelpers';
 
-/**
- * CallTicket — Signature dashboard object for a single reminder.
- * 
- * Shows time, date, title, notes (truncated), status badge, call ID.
- * Delete action only for Scheduled calls, with confirmation flow.
- */
 export default function CallTicket({ call }) {
   const { deleteReminder } = useApp();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -17,14 +11,12 @@ export default function CallTicket({ call }) {
 
   const statusKey = call.status?.toUpperCase();
   const canDelete = statusKey === 'SCHEDULED';
-  const future = call.callTime && isFuture(call.callTime);
+  const future = (call.callTime || call.time) && isFuture(call.callTime || call.time);
 
-  // Status badge config
   let badgeClass = 'badge-status badge-scheduled';
-  let statusIcon = '●';
-  if (statusKey === 'CALLED') { badgeClass = 'badge-status badge-called'; statusIcon = '✓'; }
-  else if (statusKey === 'MISSED') { badgeClass = 'badge-status badge-missed'; statusIcon = '×'; }
-  else if (statusKey === 'IN INVENTORY') { badgeClass = 'badge-status badge-inventory'; statusIcon = '↻'; }
+  if (statusKey === 'CALLED') badgeClass = 'badge-status badge-called';
+  else if (statusKey === 'MISSED') badgeClass = 'badge-status badge-missed';
+  else if (statusKey === 'IN INVENTORY') badgeClass = 'badge-status badge-inventory';
 
   const handleDelete = () => {
     if (!confirmDelete) {
@@ -32,7 +24,6 @@ export default function CallTicket({ call }) {
       return;
     }
     setIsDeleting(true);
-    // Simulate async delete (mock — no real API yet)
     setTimeout(() => {
       deleteReminder(call.id);
       setIsDeleting(false);
@@ -40,71 +31,67 @@ export default function CallTicket({ call }) {
     }, 300);
   };
 
-  const handleCancelDelete = () => {
-    setConfirmDelete(false);
-  };
+  const timeVal = call.callTime || call.time;
 
   return (
-    <div className="call-ticket">
-      <div className="call-ticket-content">
-        <div className="call-ticket-header">
-          <span className={badgeClass}>
-            {statusIcon} {call.status}
-          </span>
-          <span className="call-ticket-time">
-            {call.callTime ? `${formatCallTime(call.callTime)} · ${formatCallDate(call.callTime)}` : ''}
-            {future && call.callTime && (
-              <span style={{ color: '#FD6B00', marginLeft: '0.5rem' }}>
-                {getRelativeTime(call.callTime)}
-              </span>
-            )}
-          </span>
+    <div className="call-ticket-card">
+      <div className="call-ticket-top">
+        <span className={badgeClass}>
+          {call.status}
+        </span>
+        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          {timeVal ? `${formatCallDate(timeVal)} · ${formatCallTime(timeVal)}` : ''}
+          {future && timeVal && (
+            <span style={{ color: 'var(--accent-coral)', marginLeft: '0.4rem', fontWeight: 500 }}>
+              ({getRelativeTime(timeVal)})
+            </span>
+          )}
+        </span>
+      </div>
+
+      <h3 className="call-ticket-title">{call.title}</h3>
+
+      {call.notes && (
+        <div className="call-ticket-notes">
+          <strong>Note:</strong> {call.notes}
         </div>
+      )}
 
-        <div className="call-ticket-title">{call.title}</div>
-
-        {call.notes && (
-          <div className="call-ticket-notes">{call.notes}</div>
-        )}
-
-        {call.id && (
-          <div className="call-ticket-id">
-            CALL / {call.id.replace('rem-', '').padStart(5, '0')}
-          </div>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className="call-ticket-actions">
-        {canDelete && !confirmDelete && (
-          <button
-            className="call-ticket-btn call-ticket-btn--danger"
-            onClick={handleDelete}
-            aria-label={`Cancel call: ${call.title}`}
-          >
-            CANCEL
-          </button>
-        )}
-
-        {confirmDelete && (
-          <div className="call-ticket-confirm">
-            <span>CONFIRM?</span>
+      {canDelete && (
+        <div className="call-ticket-actions">
+          {!confirmDelete ? (
             <button
-              className="call-ticket-btn call-ticket-btn--danger"
+              type="button"
+              className="btn-ghost"
+              style={{ color: '#DC2626', fontSize: '0.8rem', padding: '0.2rem 0.5rem' }}
               onClick={handleDelete}
-              disabled={isDeleting}
             >
-              {isDeleting ? 'REMOVING…' : 'YES'}
+              Cancel call
             </button>
-            <button
-              className="call-ticket-btn"
-              onClick={handleCancelDelete}
-            >
-              NO
-            </button>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Confirm cancellation?</span>
+              <button
+                type="button"
+                className="btn-ghost"
+                style={{ color: '#DC2626', fontWeight: 600, padding: '0.2rem 0.4rem' }}
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Cancelling…' : 'Yes'}
+              </button>
+              <button
+                type="button"
+                className="btn-ghost"
+                style={{ padding: '0.2rem 0.4rem' }}
+                onClick={() => setConfirmDelete(false)}
+              >
+                No
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

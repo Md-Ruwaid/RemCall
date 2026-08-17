@@ -1,50 +1,45 @@
 import React from 'react';
 
-/**
- * WeeklyAllowance — Compact allowance/usage card.
- * 
- * Shows daily call usage vs limit with a visual progress bar.
- * Provides direct link to view full schedule timeline in Calls tab.
- */
 export default function WeeklyAllowance({ allowance, scheduledCount, onViewTimeline }) {
   const { callsUsedToday, dailyLimit, remaining, usagePercent } = allowance;
 
   return (
-    <div className="stat-card dashboard-slide-up" id="dashboard-allowance">
-      <div className="stat-card-header">
-        <div className="stat-card-label font-mono">DAILY ALLOWANCE</div>
+    <div className="dashboard-stat-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="dashboard-stat-label">Today's Allowance</span>
         {onViewTimeline && (
           <button
             type="button"
-            className="stat-card-link-btn font-mono"
+            className="btn-ghost"
+            style={{ padding: '0.2rem 0', fontSize: '0.8rem', color: 'var(--text-primary)', fontWeight: 500 }}
             onClick={onViewTimeline}
           >
-            TIMELINE →
+            Timeline →
           </button>
         )}
       </div>
 
-      <div className="stat-card-value font-display">
-        {callsUsedToday} / {dailyLimit}
-        <span className="unit font-mono">CALLS</span>
+      <div>
+        <div className="dashboard-stat-value">
+          {callsUsedToday} of {dailyLimit} <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--text-secondary)' }}>calls used</span>
+        </div>
+
+        <div className="allowance-bar-track" style={{ marginTop: '0.75rem' }}>
+          <div
+            className="allowance-bar-fill"
+            style={{ width: `${Math.min(usagePercent, 100)}%` }}
+            role="progressbar"
+            aria-valuenow={callsUsedToday}
+            aria-valuemin={0}
+            aria-valuemax={dailyLimit}
+          />
+        </div>
       </div>
 
-      <div className="allowance-bar-track">
-        <div
-          className="allowance-bar-fill"
-          style={{ width: `${Math.min(usagePercent, 100)}%` }}
-          role="progressbar"
-          aria-valuenow={callsUsedToday}
-          aria-valuemin={0}
-          aria-valuemax={dailyLimit}
-          aria-label={`${callsUsedToday} of ${dailyLimit} daily calls used`}
-        />
-      </div>
-
-      <div className="stat-card-sub font-mono">
+      <div className="dashboard-stat-sub">
         {remaining > 0
-          ? `${remaining} REMAINING · ${scheduledCount} SCHEDULED`
-          : `LIMIT REACHED · ${scheduledCount} SCHEDULED`
+          ? `${remaining} remaining today · ${scheduledCount} total scheduled`
+          : `Quota reached for today · ${scheduledCount} total scheduled`
         }
       </div>
     </div>
