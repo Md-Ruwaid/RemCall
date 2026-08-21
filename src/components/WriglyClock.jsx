@@ -18,6 +18,16 @@ const PALETTE = {
 
 export default function WriglyClock({ size = 400, className = '', style = {} }) {
   const canvasRef = useRef(null);
+  const tapStartTimeRef = useRef(-999);
+
+  const handleInteraction = () => {
+    tapStartTimeRef.current = performance.now();
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try {
+        navigator.vibrate(30);
+      } catch (e) {}
+    }
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -39,38 +49,91 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
       if (!startTime) startTime = timestamp;
       const elapsedMs = timestamp - startTime;
 
-      // Slowed down clock velocity: 22.5° per second (1 full 360° lap every 16 seconds)
+      // Clock velocity: 22.5° per second (1 full 360° lap every 16 seconds)
       const lapDurationMs = (360 / 22.5) * 1000; // 16000ms
       const currentLapMs = elapsedMs % lapDurationMs;
       const hourAngleDeg = (currentLapMs / lapDurationMs) * 360;
       const minuteAngleDeg = (hourAngleDeg * 12) % 360; // Minute hand completes 12 laps per 12-hour cycle
 
-      // Trigger Miss Flash at 120° (4:00)
+      // Trigger Miss Flash & Collision Shake at 120° (4:00 Deadline Strike)
       if (lastAngle < 120 && hourAngleDeg >= 120) {
         flashStartTime = timestamp;
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          try {
+            navigator.vibrate([45, 30, 45, 20]);
+          } catch (e) {}
+        }
       }
       lastAngle = hourAngleDeg;
 
-      // Flash Intensity Decay (200ms duration)
+      // 1. Flash Intensity Calculation (400ms duration)
       const flashElapsed = timestamp - flashStartTime;
       let flashIntensity = 0;
-      if (flashElapsed >= 0 && flashElapsed <= 200) {
-        if (flashElapsed < 30) {
-          flashIntensity = 1.0;
+      if (flashElapsed >= 0 && flashElapsed <= 400) {
+        if (flashElapsed < 40) {
+          flashIntensity = flashElapsed / 40;
         } else {
-          flashIntensity = 1 - (flashElapsed - 30) / 170;
+          flashIntensity = Math.exp(-(flashElapsed - 40) / 100);
         }
       }
       flashIntensity = Math.max(0, Math.min(1, flashIntensity));
+
+      // 2. Physical Shake & Vibration Calculations
+      let shakeX = 0;
+      let shakeY = 0;
+      let shakeAngle = 0;
+      let handFlutter = 0;
+
+      // (a) Deadline Impact Shockwave Shake (Decaying harmonic oscillation)
+      if (flashElapsed >= 0 && flashElapsed <= 550) {
+        const t = flashElapsed / 1000; // in seconds
+        const decay = Math.exp(-t * 8.5); // rapid exponential dampening
+        // Multi-frequency seismic shudder
+        const freqX = 58; // Hz
+        const freqY = 44; // Hz
+        const amp = (size * 0.032) * decay;
+
+        shakeX += (Math.sin(t * freqX * Math.PI * 2) + Math.sin(t * (freqX * 1.5) * Math.PI * 2) * 0.4) * amp;
+        shakeY += (Math.cos(t * freqY * Math.PI * 2) + Math.sin(t * (freqY * 1.7) * Math.PI * 2) * 0.4) * (amp * 0.85);
+        shakeAngle += Math.sin(t * 32 * Math.PI * 2) * (0.04 * decay);
+        handFlutter += Math.sin(t * 65 * Math.PI * 2) * (4.5 * decay); // steel hand resonance
+      }
+
+      // (b) Interactive Click/Tap Shake
+      const tapElapsed = timestamp - tapStartTimeRef.current;
+      if (tapElapsed >= 0 && tapElapsed <= 450) {
+        const t = tapElapsed / 1000;
+        const decay = Math.exp(-t * 9.0);
+        const amp = (size * 0.022) * decay;
+        shakeX += Math.sin(t * 50 * Math.PI * 2) * amp;
+        shakeY += Math.cos(t * 40 * Math.PI * 2) * amp;
+        shakeAngle += Math.sin(t * 25 * Math.PI * 2) * (0.025 * decay);
+        handFlutter += Math.sin(t * 55 * Math.PI * 2) * (3.0 * decay);
+      }
+
+      // (c) Continuous Escapement Mechanical Tick Micro-Vibration (Subtle tactile pulse every second)
+      const tickPeriod = 1000 / (22.5 / 30); // ~1333ms per major mark step
+      const tickPhase = (elapsedMs % tickPeriod) / tickPeriod;
+      if (tickPhase < 0.15) {
+        const tickNorm = tickPhase / 0.15;
+        const tickRecoil = Math.sin(tickNorm * Math.PI) * Math.exp(-tickNorm * 3);
+        shakeX += (Math.sin(elapsedMs * 0.06) * 0.4) * tickRecoil;
+        shakeY += (Math.cos(elapsedMs * 0.08) * 0.4) * tickRecoil;
+      }
 
       // Clear Canvas to Transparent
       ctx.save();
       ctx.scale(DPR, DPR);
       ctx.clearRect(0, 0, size, size);
 
-      const R = (size / 2) * 0.68; // Reserve outer space for meeting callout and clear clock margins
+      const R = (size / 2) * 0.68;
       const cx = size / 2;
       const cy = size / 2;
+
+      // Apply Physical Shockwave & Vibration Transformation to Clock Origin
+      ctx.translate(cx + shakeX, cy + shakeY);
+      ctx.rotate(shakeAngle);
+      ctx.translate(-cx, -cy);
 
       // 1. Draw Dial Face
       const dialR = Math.round(PALETTE.dialNormal.r + (PALETTE.dialFlash.r - PALETTE.dialNormal.r) * flashIntensity);
@@ -172,24 +235,21 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
       }
 
       // 6. OUTSIDE MEETING LABEL (Fade in at 75°/2:30 PM, Full at 90°/3:00 PM, Hold through 4:00 PM to 180°/6:00 PM)
-      // Displays:
-      // 4:00
-      // Meeting
       let meetingOpacity = 0;
       if (hourAngleDeg >= 75 && hourAngleDeg < 90) {
-        meetingOpacity = (hourAngleDeg - 75) / 15; // Smooth fade in
+        meetingOpacity = (hourAngleDeg - 75) / 15;
       } else if (hourAngleDeg >= 90 && hourAngleDeg <= 180) {
-        meetingOpacity = 1.0; // Hold visible through and past 4 o'clock
+        meetingOpacity = 1.0;
       } else if (hourAngleDeg > 180 && hourAngleDeg < 210) {
-        meetingOpacity = 1 - (hourAngleDeg - 180) / 30; // Gentle fade out
+        meetingOpacity = 1 - (hourAngleDeg - 180) / 30;
       }
 
       if (meetingOpacity > 0) {
-        const meetingRad = ((120 - 90) * Math.PI) / 180; // 120° = 4 o'clock
+        const meetingRad = ((120 - 90) * Math.PI) / 180;
         const pinStartR = R * 0.99;
         const pinEndR = R * 1.14;
 
-        // Leader Pin Line connecting outward from 4 o'clock rim
+        // Leader Pin Line
         ctx.strokeStyle = `rgba(231, 76, 60, ${meetingOpacity})`;
         ctx.lineWidth = R * 0.024;
         ctx.beginPath();
@@ -203,7 +263,7 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
         ctx.arc(cx + pinStartR * Math.cos(meetingRad), cy + pinStartR * Math.sin(meetingRad), R * 0.035, 0, Math.PI * 2);
         ctx.fill();
 
-        // Two-line Callout Text Outside Dial: "4:00" on top, "Meeting" below
+        // Two-line Callout Text Outside Dial
         ctx.fillStyle = `rgba(231, 76, 60, ${meetingOpacity})`;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
@@ -211,17 +271,15 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
         const labelX = cx + (R * 1.18) * Math.cos(meetingRad);
         const labelY = cy + (R * 1.18) * Math.sin(meetingRad);
 
-        // Line 1: "4:00"
         ctx.font = `700 ${Math.round(R * 0.095)}px 'Space Mono', monospace`;
         ctx.fillText('4:00', labelX + 2, labelY - 7);
 
-        // Line 2: "Meeting"
         ctx.font = `600 ${Math.round(R * 0.085)}px 'Space Grotesk', sans-serif`;
         ctx.fillText('Meeting', labelX + 2, labelY + 9);
       }
 
-      // 7. Minute Hand (Sleeker & Longer: 0.76R)
-      const minuteRad = ((minuteAngleDeg - 90) * Math.PI) / 180;
+      // 7. Minute Hand (With physical spring vibration flutter on impact)
+      const minuteRad = ((minuteAngleDeg + handFlutter * 1.4 - 90) * Math.PI) / 180;
       const minuteLen = R * 0.76;
       ctx.strokeStyle = PALETTE.handMuted;
       ctx.lineWidth = R * 0.016;
@@ -231,8 +289,8 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
       ctx.lineTo(cx + minuteLen * Math.cos(minuteRad), cy + minuteLen * Math.sin(minuteRad));
       ctx.stroke();
 
-      // 8. Hour Hand (Shorter & Thicker: 0.52R)
-      const hourRad = ((hourAngleDeg - 90) * Math.PI) / 180;
+      // 8. Hour Hand (With physical impact recoil)
+      const hourRad = ((hourAngleDeg + handFlutter * 0.6 - 90) * Math.PI) / 180;
       const hourLen = R * 0.52;
       ctx.strokeStyle = PALETTE.hand;
       ctx.lineWidth = R * 0.028;
@@ -267,6 +325,9 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
   return (
     <div
       className={className}
+      onClick={handleInteraction}
+      onTouchStart={handleInteraction}
+      title="Click clock for tactile feedback"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -277,6 +338,8 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
         height: `${size}px`,
         aspectRatio: '1 / 1',
         flexShrink: 0,
+        cursor: 'pointer',
+        userSelect: 'none',
         ...style
       }}
     >
