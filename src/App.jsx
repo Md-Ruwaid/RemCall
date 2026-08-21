@@ -71,7 +71,8 @@ function AppShell() {
         flexDirection: 'column',
         height: isHomeLocked ? '100vh' : 'auto',
         minHeight: '100vh',
-        backgroundColor: 'var(--bg-dark)',
+        backgroundColor: activeView === 'home' ? '#000000' : 'var(--bg-dark)',
+        transition: 'background-color 0.3s ease',
         position: 'relative',
         overflow: isHomeLocked ? 'hidden' : 'visible'
       }}>
@@ -139,7 +140,7 @@ function AppShell() {
             items={navItems}
             activeHref={`#${activeView}`}
             baseColor="#F5E6C8"
-            pillColor="#162C37"
+            pillColor={activeView === 'home' ? '#141414' : '#162C37'}
             hoveredPillTextColor="#F5E6C8"
             pillTextColor="#F5E6C8"
             ease="power2.easeOut"

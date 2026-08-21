@@ -1,18 +1,18 @@
 import React, { useRef, useEffect } from 'react';
 
-// Ringly Website Theme Integrated Palette
+// Ringly Website Theme Integrated Palette (Tuned for Sleek Black Landing Page)
 const PALETTE = {
-  dialNormal: { r: 18, g: 36, b: 46 },       // Deep Dark Slate Navy (#12242E)
+  dialNormal: { r: 14, g: 14, b: 14 },       // Deep Obsidian Black (#0E0E0E)
   dialFlash: { r: 53, g: 28, b: 25 },        // Miss Flash Dark Red (#351C19)
-  bevelNormal: { r: 35, g: 70, b: 86 },      // Subtle Slate Border (#234656)
+  bevelNormal: { r: 42, g: 42, b: 42 },      // Subtle Slate Rim (#2A2A2A)
   bevelFlash: { r: 189, g: 166, b: 165 },    // Miss Flash Ring Tint (#BDA6A5)
   hand: '#F5E6C8',                            // Warm Pale Cream
   handMuted: 'rgba(245, 230, 200, 0.75)',     // Sleek Pale Cream
   numbers: '#F5E6C8',                        // Hour Numbers
-  ticksMajor: 'rgba(245, 230, 200, 0.65)',   // Major Hour Ticks
-  ticksMinor: 'rgba(245, 230, 200, 0.25)',   // Minor Ticks
+  ticksMajor: 'rgba(245, 230, 200, 0.85)',   // Major Hour Ticks
+  ticksMinor: 'rgba(245, 230, 200, 0.3)',    // Minor Ticks
   orange: { r: 253, g: 107, b: 0 },          // Busywork Amber Orange (#FD6B00)
-  gray: { r: 112, g: 111, b: 110 },          // Lost Time Slate Gray (#706F6E)
+  gray: { r: 110, g: 110, b: 110 },          // Lost Time Slate Gray (#6E6E6E)
   meetingMark: '#E74C3C'                     // Signal Red (#E74C3C)
 };
 
@@ -248,7 +248,7 @@ export default function WriglyClock({ size = 400, className = '', style = {} }) 
       ctx.arc(cx, cy, R * 0.045, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = PALETTE.dialNormal;
+      ctx.fillStyle = `rgb(${PALETTE.dialNormal.r}, ${PALETTE.dialNormal.g}, ${PALETTE.dialNormal.b})`;
       ctx.beginPath();
       ctx.arc(cx, cy, R * 0.018, 0, Math.PI * 2);
       ctx.fill();

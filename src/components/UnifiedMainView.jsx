@@ -106,13 +106,13 @@ export default function UnifiedMainView() {
       <div className="container-wide" style={{ width: '100%', marginTop: isMobile ? '2rem' : 0 }}>
         <div className="font-mono" style={{
           fontSize: '0.78rem',
-          color: 'var(--text-muted)',
+          color: 'rgba(245, 230, 200, 0.65)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: isMobile ? '0.75rem' : '1.5rem',
           flexWrap: 'wrap',
-          borderTop: '1px solid var(--border-subtle)',
+          borderTop: '1px solid rgba(245, 230, 200, 0.15)',
           paddingTop: '1rem',
           paddingBottom: '0.25rem'
         }}>
